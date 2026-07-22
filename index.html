@@ -204,6 +204,10 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   padding:17px 21px;width:100%;max-width:640px;box-shadow:var(--shadow);}
 .stag{display:inline-block;background:var(--greenXL);color:var(--green);border:1px solid var(--border);
   border-radius:6px;padding:2px 9px;font-size:9px;font-weight:700;margin-bottom:6px;}
+.lvl-badge{display:inline-block;border-radius:6px;padding:2px 8px;font-size:9px;font-weight:800;margin-left:6px;vertical-align:middle;}
+.lvl-badge.lvl-easy{background:#E8F5EC;color:#1B5E20;}
+.lvl-badge.lvl-medium{background:#FFF8E1;color:#8A6100;}
+.lvl-badge.lvl-hard{background:#FFEBEE;color:#B71C1C;}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:640px;}
 .opt{background:#FFF;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;
   font-size:12.5px;font-weight:600;color:var(--green);cursor:pointer;text-align:center;
@@ -583,7 +587,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   </div>
   <div class="pbar"><div class="pbar-fill" id="mt-prog" style="width:0%"></div></div>
   <div class="gbody">
-    <div class="mt-info">جولة <b id="mt-r">1</b> من 3 — صِل كل مصطلح بتعريفه</div>
+    <div class="mt-info">جولة <b id="mt-r">1</b> من 3 — صِل كل مصطلح بتعريفه <span id="mt-lvl"></span></div>
     <div class="match-board">
       <div class="match-col"><h4>📌 المصطلح</h4><div id="mt-terms"></div></div>
       <div class="match-col"><h4>📖 التعريف</h4><div id="mt-defs"></div></div>
@@ -728,7 +732,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   <div class="pbar"><div class="pbar-fill" id="ro-prog" style="width:0%"></div></div>
   <div class="gbody">
     <div class="card" style="padding:20px 24px;max-width:640px;text-align:center;">
-      <div style="font-size:11px;color:var(--green3);margin-bottom:8px;">ما جذر هذه الكلمة؟</div>
+      <div id="ro-label" style="font-size:11px;color:var(--green3);margin-bottom:8px;">ما جذر هذه الكلمة؟</div>
       <div id="ro-word" style="font-size:28px;font-weight:900;color:var(--green);margin:8px 0 4px;"></div>
     </div>
     <div class="opts" id="ro-opts"></div>
@@ -874,6 +878,10 @@ russia:'<svg viewBox="0 0 24 16"><rect width="24" height="5.33" fill="#fff"/><re
 };
 
 const DIFF_PTS={easy:10,medium:20,hard:30};
+const LEVEL_LABEL={easy:'مبتدئ',medium:'وسط',hard:'صعب'};
+const PRAISE=["رائع!","ممتاز!","أحسنت!","عمل رائع!","استمر!","بارع!","مذهل!","جميل جداً!","أصبت!","دقيق!","تألقت!","لا يُشق لك غبار!"];
+function praise(){return PRAISE[Math.floor(Math.random()*PRAISE.length)];}
+function levelBadge(level){const lbl=LEVEL_LABEL[level];return lbl?`<span class="lvl-badge lvl-${level}">${lbl}</span>`:'';}
 function icon(key,size){size=size||20;return '<span class="icn" style="display:inline-flex;width:'+size+'px;height:'+size+'px;vertical-align:middle">'+(ICONS[key]||ICONS.qmark)+'</span>';}
 function flagIcon(key,w,h){w=w||26;h=h||18;return '<span class="icn-flag" style="display:inline-flex;width:'+w+'px;height:'+h+'px;vertical-align:middle;border-radius:2px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.1)">'+(FLAGS[key]||'')+'</span>';}
 
@@ -1525,7 +1533,7 @@ function loadJ(){
   $('ff').innerHTML=`<div class="book-art" style="background:${b.color}"><span style="position:relative;z-index:1">${b.icon.startsWith("flag-")?flagIcon(b.icon.slice(5),44,30):icon(b.icon,34)}</span></div>
     <div class="bi"><div class="stag">${b.series}</div><h3>${b.title}</h3><p>${b.summary.slice(0,90)}...</p><div class="flip-hint">👆 انقر للتفاصيل</div></div>`;
   $('fb_b').innerHTML=`<h4>📖 نبذة عن الكتاب</h4><p>${b.summary}</p><div class="fact-box">💡 <b>هل تعلم:</b> ${b.fact}</div>`;
-  $('j-qt').innerHTML=`<b style="color:var(--green2)">❓</b> ${b.q}`;
+  $('j-qt').innerHTML=`${levelBadge(b.level)}<b style="color:var(--green2)">❓</b> ${b.q}`;
   const og=$('j-opts');og.innerHTML='';
   shuf(b.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
     const btn=document.createElement('button');btn.className='opt';btn.textContent=o;
@@ -1538,7 +1546,7 @@ function ansJ(ok,btn,ci,opts,ff,lvl){
   document.querySelectorAll('#j-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===opts[ci])b.classList.add('correct');});
   const fb=$('j-fb');const pts=DIFF_PTS[lvl]||30;
   if(ok){btn.classList.add('correct');jPts+=pts;$('j-pts').textContent=jPts;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);}
   else{btn.classList.add('wrong');
     fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>💡 ${ff}`;toast('❌ حاول في التالية!');}
   $('j-next').style.display='block';jI++;
@@ -1553,7 +1561,7 @@ function loadC(){
   const p=cPzl[cIc];cCur=[];hInt=false;
   $('c-q').textContent=`${cIc+1}/${cPzl.length}`;$('c-pts').textContent=cPtsc;
   $('c-prog').style.width=`${(cIc/cPzl.length)*100}%`;
-  $('c-msg').textContent='';$('c-clue').innerHTML=p.clue;$('c-bk').textContent=p.bk;
+  $('c-msg').textContent='';$('c-clue').innerHTML=`${levelBadge(p.level)}${p.clue}`;$('c-bk').textContent=p.bk;
   $('c-next').style.display='none';
   const tw=$('c-tiles');tw.innerHTML='';
   [...p.answer].forEach((_,i)=>{const t=document.createElement('div');t.className='tile';t.id=`ct${i}`;tw.appendChild(t);});
@@ -1576,7 +1584,7 @@ function checkC(){
   const ok=cCur.map(x=>x.l).join('')===ans.join('');
   document.querySelectorAll('.tile').forEach(t=>t.classList.add(ok?'t-ok':'t-err'));
   if(ok){const full=DIFF_PTS[cPzl[cIc].level]||25;const pts=hInt?Math.round(full/2):full;cPtsc+=pts;$('c-pts').textContent=cPtsc;
-    $('c-msg').textContent=`🎉 صحيح! +${pts} نقطة`;toast(`👑 +${pts} نقطة`);}
+    $('c-msg').textContent=`🎉 ${praise()} +${pts} نقطة`;toast(`👑 +${pts} نقطة`);}
   else{$('c-msg').textContent=`❌ الإجابة: ${ans.join('')}`;toast('❌ اللغز التالي!');}
   $('c-next').style.display='block';cIc++;
   if(cIc>=cPzl.length)$('c-next').textContent='النتيجة 🏆';
@@ -1601,7 +1609,7 @@ function loadM(){
   $('m-q').textContent=`${mIm+1}/${mD.length}`;$('m-pts').textContent=mPtsm;
   $('m-prog').style.width=`${(mIm/mD.length)*100}%`;
   $('m-next').style.display='none';$('m-fb').classList.remove('show','ok','err');
-  $('m-fl').innerHTML=flagIcon(c.f,52,36);$('m-sub').textContent=c.s;
+  $('m-fl').innerHTML=flagIcon(c.f,52,36);$('m-sub').innerHTML=`${levelBadge(c.level)}${c.s}`;
   $('m-facts').innerHTML=c.facts.map(f=>`<div class="fact-row"><span class="fi">${icon(f.i,16)}</span>${f.t}</div>`).join('');
   const og=$('m-opts');og.innerHTML='';
   shuf([...c.opts]).forEach(o=>{
@@ -1614,7 +1622,7 @@ function ansM(ok,btn,correct,lvl){
   document.querySelectorAll('#m-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
   const fb=$('m-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.classList.add('correct');mPtsm+=pts;$('m-pts').textContent=mPtsm;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ صحيح! 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ ${praise()} 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);}
   else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: 🌍 <b>${correct}</b>`;toast('❌ حاول في التالية!');}
   $('m-next').style.display='block';mIm++;
   if(mIm>=mD.length)$('m-next').textContent='النتيجة 🏆';
@@ -1626,7 +1634,7 @@ let mtR,mtPairs,mtSel,mtMatched,mtPts,mtLevel;
 function startMatch(){mtR=0;mtPts=0;loadMt();show('s-match');}
 function loadMt(){
   mtSel=null;mtMatched=0;const mtRound=MT_ROUNDS[mtR%MT_ROUNDS.length];mtPairs=[...mtRound.pairs];mtLevel=mtRound.level;
-  $('mt-r').textContent=mtR+1;$('mt-m').textContent=0;$('mt-pts').textContent=mtPts;
+  $('mt-r').textContent=mtR+1;$('mt-m').textContent=0;$('mt-pts').textContent=mtPts;$('mt-lvl').innerHTML=levelBadge(mtRound.level);
   $('mt-prog').style.width=`${(mtR/MT_ROUNDS.length)*100}%`;$('mt-next').style.display='none';
   const terms=shuf(mtPairs.map(p=>p.t));const defs=shuf(mtPairs.map(p=>p.d));
   const tc=$('mt-terms');const dc=$('mt-defs');tc.innerHTML='';dc.innerHTML='';
@@ -1640,7 +1648,7 @@ function selMt(el){
   const a=mtSel,b=el;a.classList.remove('sel');mtSel=null;
   if(a.dataset.v===b.dataset.v){
     a.classList.add('matched');b.classList.add('matched');mtMatched++;
-    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ مطابقة صحيحة! +${mtAdd}`);
+    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ ${praise()} +${mtAdd}`);
     if(mtMatched>=mtPairs.length){mtR++;setTimeout(()=>{
       if(mtR>=MT_ROUNDS.length){showResult(mtPts,'mt',[`🔗 أكملت <b>${MT_ROUNDS.length} جولات</b>`,`🏅 نقاطك: <b>${mtPts}</b>`]);}
       else{$('mt-next').style.display='block';}
@@ -1657,7 +1665,7 @@ function loadB(){
   $('b-q').textContent=`${bI+1}/${bQs.length}`;$('b-pts').textContent=bPtsb;
   $('b-prog').style.width=`${(bI/bQs.length)*100}%`;
   $('b-next').style.display='none';$('b-fb').classList.remove('show','ok','err');
-  $('b-s').textContent=q.s;$('b-t').textContent=q.t;
+  $('b-s').textContent=q.s;$('b-t').innerHTML=`${levelBadge(q.level)}${q.t}`;
   $('b-qt').innerHTML=q.q.replace('___','<span class="blank">؟؟؟</span>');
   const og=$('b-opts');og.innerHTML='';
   shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
@@ -1671,7 +1679,7 @@ function ansB(ok,btn,ci,opts,explain,origQ,lvl){
   $('b-qt').innerHTML=origQ.replace('___',`<span class="blank filled">${opts[ci]}</span>`);
   const fb=$('b-fb');const pts=DIFF_PTS[lvl]||25;
   if(ok){btn.classList.add('correct');bPtsb+=pts;$('b-pts').textContent=bPtsb;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);}
   else{btn.classList.add('wrong');
     fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>${explain}`;toast('❌ حاول في التالية!');}
   $('b-next').style.display='block';bI++;
@@ -2291,7 +2299,7 @@ function loadK(){
   $('k-prog').style.width=`${(kI/kQs.length)*100}%`;
   $('k-next').style.display='none';$('k-fb').classList.remove('show','ok','err');
   $('k-emoji').innerHTML=icon(q.icon,64);
-  $('k-series').textContent=q.series;
+  $('k-series').innerHTML=`${levelBadge(q.level)}${q.series}`;
   $('k-question').textContent=q.q;
   const og=$('k-opts');og.innerHTML='';
   shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
@@ -2309,7 +2317,7 @@ function ansK(ok,btn,ci,opts,e,lvl){
   const fb=$('k-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.style.background='#E8F5EC';btn.style.borderColor='#2E7D32';btn.style.color='#1B5E20';
     kPtsk+=pts;$('k-pts').textContent=kPtsk;
-    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>أحسنت! +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');}
+    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>${praise()} +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');}
   else{btn.style.background='#FFEBEE';btn.style.borderColor='#C62828';btn.style.color='#B71C1C';
     fb.className='fb2 err show';fb.innerHTML=`💪 الصحيح: <b>${opts[ci]}</b><br>✨ ${e}`;toast('💪 حاول في السؤال التالي!');}
   $('k-next').style.display='block';kI++;
@@ -2374,7 +2382,7 @@ function loadMn(){
   $('mn-q').textContent=`${mnI+1}/${mnQs.length}`;$('mn-pts').textContent=mnPts;
   $('mn-prog').style.width=`${(mnI/mnQs.length)*100}%`;
   $('mn-next').style.display='none';$('mn-fb').classList.remove('show','ok','err');
-  $('mn-src').textContent=q.src;
+  $('mn-src').innerHTML=`${levelBadge(q.level)}${q.src}`;
   // render sentence with highlighted word
   $('mn-sentence').innerHTML=q.sentence.replace('<mark>',`<span class="highlight-word">`).replace('</mark>','</span>');
   const og=$('mn-opts');og.innerHTML='';
@@ -2386,7 +2394,7 @@ function loadMn(){
       const fb=$('mn-fb');
       const mnAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');mnPts+=mnAdd;$('mn-pts').textContent=mnPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📖 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('mn-next').style.display='block';mnI++;
@@ -2443,7 +2451,7 @@ function loadCv(){
     <div style="filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))">${q.icon.startsWith("flag-")?flagIcon(q.icon.slice(5),84,58):icon(q.icon,50)}</div>
     <div style="font-size:14px;font-weight:900;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,.4);max-width:320px">${q.title}</div>
     <div style="font-size:10px;opacity:.75;margin-top:4px;letter-spacing:.5px">مجمع الملك سلمان العالمي للغة العربية</div>`;
-  $('cv-question').textContent=q.question;
+  $('cv-question').innerHTML=`${levelBadge(q.level)}${q.question}`;
   const og=$('cv-opts');og.innerHTML='';
   shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
     const btn=document.createElement('button');btn.className='cv-opt';btn.textContent=o;
@@ -2453,7 +2461,7 @@ function loadCv(){
       const fb=$('cv-fb');
       const cvAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');cvPts+=cvAdd;$('cv-pts').textContent=cvPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🖼️ ${q.explain}`;toast('❌ حاول في التالية!');}
       $('cv-next').style.display='block';cvI++;
@@ -2512,7 +2520,7 @@ function loadHt(){
   $('ht-next').style.display='none';
   $('ht-fb').classList.remove('show','ok','err');
   $('ht-correction').style.display='none';
-  $('ht-src').textContent=q.src;
+  $('ht-src').innerHTML=`${levelBadge(q.level)}${q.src}`;
   // Render words as clickable spans
   $('ht-text').innerHTML = q.words.map((w,i)=>
     `<span class="ht-word" id="hw${i}" onclick="clickWord(${i})">${w}</span> `
@@ -2529,7 +2537,7 @@ function clickWord(idx){
     const htAdd=DIFF_PTS[q.level]||30;
     htAnswered=true;htPts+=htAdd;$('ht-pts').textContent=htPts;
     $('ht-fb').className='fb2 ok show';
-    $('ht-fb').innerHTML=`🎯 <b>أصبت! الخطأ في كلمة "${q.correct}" — +${htAdd} نقطة</b>`;
+    $('ht-fb').innerHTML=`🎯 <b>${praise()} الخطأ في كلمة "${q.correct}" — +${htAdd} نقطة</b>`;
     $('ht-correction').style.display='block';
     $('ht-correction').innerHTML=`<b>📝 التصحيح:</b><br>${q.explanation}`;
     $('ht-next').style.display='block';htI++;
@@ -2573,7 +2581,7 @@ function loadR(){
   $('ro-q').textContent=`${roI+1}/${roQs.length}`;$('ro-pts').textContent=roPts;
   $('ro-prog').style.width=`${(roI/roQs.length)*100}%`;
   $('ro-next').style.display='none';$('ro-fb').classList.remove('show','ok','err');
-  $('ro-word').textContent=q.word;
+  $('ro-label').innerHTML=`${levelBadge(q.level)}ما جذر هذه الكلمة؟`;$('ro-word').textContent=q.word;
   const og=$('ro-opts');og.innerHTML='';
   shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
     const btn=document.createElement('button');btn.className='opt';btn.textContent=o;
@@ -2582,7 +2590,7 @@ function loadR(){
       document.querySelectorAll('#ro-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('ro-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');roPts+=pts;$('ro-pts').textContent=roPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🌱 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('ro-next').style.display='block';roI++;
@@ -2619,7 +2627,7 @@ function loadCj(){
   $('cj-q').textContent=`${cjI+1}/${cjQs.length}`;$('cj-pts').textContent=cjPts;
   $('cj-prog').style.width=`${(cjI/cjQs.length)*100}%`;
   $('cj-next').style.display='none';$('cj-fb').classList.remove('show','ok','err');
-  $('cj-qt').textContent=q.q;
+  $('cj-qt').innerHTML=`${levelBadge(q.level)}${q.q}`;
   const og=$('cj-opts');og.innerHTML='';
   shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
     const btn=document.createElement('button');btn.className='opt';btn.textContent=o;
@@ -2628,7 +2636,7 @@ function loadCj(){
       document.querySelectorAll('#cj-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('cj-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');cjPts+=pts;$('cj-pts').textContent=cjPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🔄 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('cj-next').style.display='block';cjI++;
