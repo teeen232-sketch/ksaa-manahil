@@ -391,7 +391,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
     <div class="book-strip" id="bookStrip">
       <div class="fb c1" onclick="openCatPanel('الندوات والمؤتمرات')" title="الندوات والمؤتمرات"><span class="fi">🎤</span><span class="fl">الندوات<br>والمؤتمرات</span></div>
       <div class="fb cg" onclick="openCatPanel('المباحث اللغوية')" title="المباحث اللغوية"><span class="fi">🔬</span><span class="fl">المباحث<br>اللغوية</span></div>
-      <div class="fb c2" onclick="openCatPanel('الأدلة والمعلومات')" title="الأدلة والمعلومات"><span class="fi">📋</span><span class="fl">الأدلة<br>والمعلومات</span></div>
+      <div class="fb c2" onclick="openCatPanel('الأدلة والمعلومات')" title="الأدلة والمعلومات"><span class="fi">📚</span><span class="fl">الأدلة<br>والمعلومات</span></div>
       <div class="fb cg2" onclick="openCatPanel('الرسائل الجامعية')" title="الرسائل الجامعية"><span class="fi">🎓</span><span class="fl">الرسائل<br>الجامعية</span></div>
       <div class="fb c3" onclick="openCatPanel('العربية في العالم')" title="العربية في العالم"><span class="fi">🌍</span><span class="fl">العربية<br>في العالم</span></div>
       <div class="fb cg" onclick="openCatPanel('السياسات والمعايير')" title="السياسات والمعايير"><span class="fi">⚖️</span><span class="fl">السياسات<br>والمعايير</span></div>
@@ -451,8 +451,8 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
         <div class="mc-desc">كلمة مظللة من نصوص المجمع — اختر معناها الصحيح</div>
       </div>
       <div class="mc" onclick="startCover()">
-        <div class="mc-badge new">📗 جديد</div>
-        <span class="mc-icon">📗</span>
+        <div class="mc-badge new">🖼️ جديد</div>
+        <span class="mc-icon">🖼️</span>
         <div class="mc-title">مطابقة الغلاف</div>
         <div class="mc-desc">طابق غلاف الكتاب مع عنوانه أو مؤلفه أو مساره البحثي</div>
       </div>
@@ -619,7 +619,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 <div class="screen" id="s-cover">
   <div class="ghdr">
     <button class="gbtn" onclick="goHome()">← رئيسية</button>
-    <div class="ghdr-l"><span class="ghdr-ico">📗</span><span class="ghdr-nm">مطابقة الغلاف</span></div>
+    <div class="ghdr-l"><span class="ghdr-ico">🖼️</span><span class="ghdr-nm">مطابقة الغلاف</span></div>
     <div class="ghdr-stats">
       <div class="gstat"><div class="gv" id="cv-q">1/6</div><div class="gl">سؤال</div></div>
       <div class="gstat"><div class="gv" id="cv-pts">0</div><div class="gl">نقطة</div></div>
@@ -1289,7 +1289,7 @@ const CATS = {
   },
 
   "الأدلة والمعلومات": {
-    icon:"📋", color:"#124D28",
+    icon:"📚", color:"#124D28",
     url:"https://library.ksaa.gov.sa/index/book",
     desc:"أدلة المجمع ومطبوعاته المرجعية",
     books:[
@@ -1617,15 +1617,15 @@ function loadCv(){
       document.querySelectorAll('#cv-opts .cv-opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('cv-fb');
       if(i===q.ok){btn.classList.add('correct');cvPts+=25;$('cv-pts').textContent=cvPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +25 نقطة</b><br>📗 ${q.explain}`;toast('✅ +25 نقطة');}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +25 نقطة</b><br>🖼️ ${q.explain}`;toast('✅ +25 نقطة');}
       else{btn.classList.add('wrong');
-        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📗 ${q.explain}`;toast('❌ حاول في التالية!');}
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🖼️ ${q.explain}`;toast('❌ حاول في التالية!');}
       $('cv-next').style.display='block';cvI++;
       if(cvI>=cvQs.length)$('cv-next').textContent='النتيجة 🏆';
     };og.appendChild(btn);
   });
 }
-function nextCv(){if(cvI>=cvQs.length){showResult(cvPts,'cv',[`📗 طابقت <b>${cvQs.length} أغلفة</b> من إصدارات المجمع`,`💡 نقاطك: <b>${cvPts}</b> من أصل ${cvQs.length*25}`]);return;}loadCv();}
+function nextCv(){if(cvI>=cvQs.length){showResult(cvPts,'cv',[`🖼️ طابقت <b>${cvQs.length} أغلفة</b> من إصدارات المجمع`,`💡 نقاطك: <b>${cvPts}</b> من أصل ${cvQs.length*25}`]);return;}loadCv();}
 
 /* ════════ صائد الأخطاء ════════ */
 const HT_Q = [
