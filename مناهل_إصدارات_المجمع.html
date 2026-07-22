@@ -22,6 +22,92 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .screen{display:none;width:100%;height:100%;position:absolute;top:0;right:0;flex-direction:column;align-items:center;z-index:1;}
 .screen.active{display:flex;}
 
+
+/* ── BOOK CATEGORY PANEL ── */
+.cat-panel{
+  display:none;position:fixed;top:0;right:0;bottom:0;left:0;
+  background:rgba(10,30,12,.65);z-index:200;
+  align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+.cat-panel.open{display:flex;}
+.cat-box{
+  background:#FFF;border-radius:20px;width:92%;max-width:680px;
+  max-height:82vh;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);animation:panelIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes panelIn{0%{transform:scale(.85);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.cat-hdr{
+  background:var(--green);padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cat-hdr-left{display:flex;align-items:center;gap:10px;}
+.cat-hdr-icon{font-size:28px;}
+.cat-hdr-title{font-size:16px;font-weight:900;color:#FFF;}
+.cat-hdr-sub{font-size:10px;color:rgba(255,255,255,.65);margin-top:1px;}
+.cat-close{background:rgba(255,255,255,.18);border:none;border-radius:8px;
+  width:32px;height:32px;font-size:16px;color:#FFF;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.cat-close:hover{background:rgba(255,255,255,.35);}
+.cat-body{overflow-y:auto;padding:16px 18px;flex:1;}
+.cat-body::-webkit-scrollbar{width:5px;}
+.cat-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.book-list-item{
+  display:flex;align-items:center;gap:12px;padding:11px 14px;
+  border-bottom:1px solid var(--border2);cursor:pointer;
+  border-radius:10px;transition:background .18s;text-decoration:none;
+}
+.book-list-item:hover{background:var(--greenXL);}
+.book-list-item:last-child{border-bottom:none;}
+.bli-num{
+  width:28px;height:28px;border-radius:50%;background:var(--green);
+  color:#FFF;font-size:11px;font-weight:900;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;
+}
+.bli-info{flex:1;}
+.bli-title{font-size:12.5px;font-weight:700;color:var(--green);line-height:1.4;}
+.bli-year{font-size:9.5px;color:var(--greenL);margin-top:2px;}
+.bli-arrow{font-size:14px;color:var(--border);flex-shrink:0;}
+.cat-footer{
+  padding:10px 18px;border-top:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cat-count{font-size:11px;color:var(--green3);}
+.cat-lib-btn{
+  background:var(--green);color:#FFF;border:none;border-radius:9px;
+  padding:8px 18px;font-size:11.5px;font-weight:700;cursor:pointer;
+  font-family:var(--font);text-decoration:none;display:inline-block;
+}
+
+
+/* ── ما معنى الكلمة ── */
+.highlight-word{
+  background:linear-gradient(120deg,rgba(10,61,30,.15) 0%,rgba(10,61,30,.25) 100%);
+  color:var(--green);font-weight:900;padding:2px 7px;border-radius:6px;
+  border-bottom:3px solid var(--green);cursor:default;
+  box-shadow:0 2px 8px rgba(10,61,30,.15);
+}
+
+/* ── مطابقة الغلاف ── */
+.cv-opt{
+  background:#FFF;border:2px solid var(--border);border-radius:10px;
+  padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--green);
+  cursor:pointer;text-align:center;font-family:var(--font);transition:all .2s;line-height:1.4;
+}
+.cv-opt:hover:not(:disabled){border-color:var(--green);background:var(--greenXL);}
+.cv-opt.correct{background:#E8F5EC;border-color:#2E7D32;color:#1B5E20;}
+.cv-opt.wrong{background:#FFEBEE;border-color:#C62828;color:#B71C1C;}
+.cv-opt:disabled{cursor:default;}
+
+/* ── صائد الأخطاء ── */
+.ht-word{
+  cursor:pointer;padding:2px 4px;border-radius:5px;transition:all .18s;
+  display:inline-block;
+}
+.ht-word:hover{background:rgba(10,61,30,.1);color:var(--green);}
+.ht-word.selected-wrong{background:#FFEBEE;color:#C62828;border-bottom:2px solid #C62828;}
+.ht-word.selected-correct{background:#E8F5EC;color:#1B5E20;border-bottom:2px solid #2E7D32;animation:pop .3s ease;}
+.ht-word.is-error{background:#FFF9C4;} /* hint after reveal */
+
 /* ══ INTRO ══ */
 #s-intro{overflow-y:auto;justify-content:flex-start;}
 
@@ -38,16 +124,30 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
   width:280px;height:1px;background:linear-gradient(90deg,transparent,var(--green3),transparent);}
 
-.book-strip{display:flex;gap:9px;justify-content:center;margin-bottom:18px;overflow:hidden;}
-.fb{width:72px;height:96px;border-radius:6px 10px 10px 6px;flex-shrink:0;
+.book-strip{display:flex;gap:11px;justify-content:center;margin-bottom:20px;overflow-x:auto;padding-bottom:6px;flex-wrap:nowrap;}
+.fb{width:80px;height:108px;border-radius:6px 12px 12px 6px;flex-shrink:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  box-shadow:4px 3px 14px rgba(0,0,0,.25);position:relative;overflow:hidden;
-  padding:6px 4px;}
-.fb::before{content:'';position:absolute;right:0;top:0;bottom:0;width:6px;background:rgba(0,0,0,.2);}
-.fb::after{content:'';position:absolute;right:6px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.15);}
-.fb span.fi{font-size:26px;position:relative;z-index:1;}
-.fb span.fl{font-size:8px;color:rgba(255,255,255,.85);text-align:center;line-height:1.3;
+  box-shadow:4px 4px 16px rgba(0,0,0,.22);position:relative;overflow:hidden;
+  padding:7px 5px;cursor:pointer;text-decoration:none;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;}
+.fb:hover{transform:translateY(-9px) scale(1.07);box-shadow:4px 12px 28px rgba(0,0,0,.35);}
+.fb::before{content:'';position:absolute;right:0;top:0;bottom:0;width:7px;background:rgba(0,0,0,.18);}
+.fb::after{content:'';position:absolute;right:7px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.18);}
+.fb span.fi{font-size:28px;position:relative;z-index:1;display:block;animation:bob 2.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.fb:nth-child(2) span.fi{animation-delay:.25s;}
+.fb:nth-child(3) span.fi{animation-delay:.5s;}
+.fb:nth-child(4) span.fi{animation-delay:.75s;}
+.fb:nth-child(5) span.fi{animation-delay:1s;}
+.fb:nth-child(6) span.fi{animation-delay:1.25s;}
+.fb:nth-child(7) span.fi{animation-delay:1.5s;}
+.fb:nth-child(8) span.fi{animation-delay:1.75s;}
+.fb:nth-child(9) span.fi{animation-delay:2s;}
+.fb:nth-child(10) span.fi{animation-delay:2.25s;}
+.fb span.fl{font-size:7.5px;color:rgba(255,255,255,.92);text-align:center;line-height:1.35;
   position:relative;z-index:1;font-family:var(--font);font-weight:700;}
+.fb.c1{background:#0A3D1E;}.fb.c2{background:#124D28;}.fb.c3{background:#1A5E31;}.fb.c4{background:#22743C;}
+.fb.cg{background:#5A6B5C;}.fb.cg2{background:#475A49;}
 
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--greenXL);
   border:1px solid var(--border);border-radius:20px;padding:5px 16px;
@@ -172,7 +272,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .map-card{background:#FFF;border:1.5px solid var(--border);border-radius:14px;
   padding:17px 21px;width:100%;max-width:640px;box-shadow:var(--shadow);}
 .map-top{display:flex;align-items:center;gap:13px;margin-bottom:11px;}
-.cnt-flag{font-size:48px;}
+.cnt-lamp{font-size:52px;animation:bob 2s ease-in-out infinite;flex-shrink:0;}
 .map-info h3{font-size:15px;font-weight:900;color:var(--green);}
 .map-info p{font-size:11px;color:var(--green3);margin-top:3px;line-height:1.6;}
 .facts-list{display:flex;flex-direction:column;gap:6px;}
@@ -285,23 +385,26 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
     <div class="hdr-right">أكثر من <b>400</b> إصدار علمي<br>لخدمة لغة الضاد</div>
   </div>
   <div class="hero">
-    <div class="book-strip">
-      <div class="fb" style="background:#0A3D1E"><span class="fi">🎤</span><span class="fl">الندوات<br>والمؤتمرات</span></div>
-      <div class="fb" style="background:#124D28"><span class="fi">🔬</span><span class="fl">المباحث<br>اللغوية</span></div>
-      <div class="fb" style="background:#1A5E31"><span class="fi">📋</span><span class="fl">الأدلة<br>والمعلومات</span></div>
-      <div class="fb" style="background:#0A3D1E"><span class="fi">🎓</span><span class="fl">الرسائل<br>الجامعية</span></div>
-      <div class="fb" style="background:#22743C"><span class="fi">🌍</span><span class="fl">العربية<br>في العالم</span></div>
-      <div class="fb" style="background:#124D28"><span class="fi">⚖️</span><span class="fl">السياسات<br>والمعايير</span></div>
-      <div class="fb" style="background:#1A5E31"><span class="fi">🗺️</span><span class="fl">التخطيط<br>اللغوي</span></div>
-      <div class="fb" style="background:#0A3D1E"><span class="fi">👦</span><span class="fl">أطفال<br>العربية</span></div>
-      <div class="fb" style="background:#22743C"><span class="fi">🎙️</span><span class="fl">المحاضرات</span></div>
-      <div class="fb" style="background:#124D28"><span class="fi">📑</span><span class="fl">الدراسات</span></div>
+    <div style="font-size:13px;font-weight:900;color:var(--green);text-align:center;margin-bottom:10px;letter-spacing:.3px;">
+      📚 سلاسل إصدارات المجمع — انقر على أي فئة لعرض كتبها
+    </div>
+    <div class="book-strip" id="bookStrip">
+      <div class="fb c1" onclick="openCatPanel('الندوات والمؤتمرات')" title="الندوات والمؤتمرات"><span class="fi">🎤</span><span class="fl">الندوات<br>والمؤتمرات</span></div>
+      <div class="fb cg" onclick="openCatPanel('المباحث اللغوية')" title="المباحث اللغوية"><span class="fi">🔬</span><span class="fl">المباحث<br>اللغوية</span></div>
+      <div class="fb c2" onclick="openCatPanel('الأدلة والمعلومات')" title="الأدلة والمعلومات"><span class="fi">📋</span><span class="fl">الأدلة<br>والمعلومات</span></div>
+      <div class="fb cg2" onclick="openCatPanel('الرسائل الجامعية')" title="الرسائل الجامعية"><span class="fi">🎓</span><span class="fl">الرسائل<br>الجامعية</span></div>
+      <div class="fb c3" onclick="openCatPanel('العربية في العالم')" title="العربية في العالم"><span class="fi">🌍</span><span class="fl">العربية<br>في العالم</span></div>
+      <div class="fb cg" onclick="openCatPanel('السياسات والمعايير')" title="السياسات والمعايير"><span class="fi">⚖️</span><span class="fl">السياسات<br>والمعايير</span></div>
+      <div class="fb c4" onclick="openCatPanel('التخطيط اللغوي')" title="التخطيط اللغوي"><span class="fi">🗺️</span><span class="fl">التخطيط<br>اللغوي</span></div>
+      <div class="fb cg2" onclick="openCatPanel('أطفال العربية')" title="أطفال العربية"><span class="fi">👦</span><span class="fl">أطفال<br>العربية</span></div>
+      <div class="fb c1" onclick="openCatPanel('المحاضرات')" title="المحاضرات"><span class="fi">🎙️</span><span class="fl">المحاضرات</span></div>
+      <div class="fb cg" onclick="openCatPanel('الدراسات')" title="الدراسات"><span class="fi">📑</span><span class="fl">الدراسات</span></div>
     </div>
     <div class="hero-badge">📚 لعبة لغوية مستوحاة من إصدارات المجمع الحقيقية</div>
     <div class="hero-title">مناهل من إصدارات المجمع</div>
     <div class="hero-sub">اكتشف كتب المجمع وتعلّم من مناهلها العلمية اللغوية</div>
     <div class="hero-stats">
-      <div class="hs"><div class="hv">6</div><div class="hl">ألعاب</div></div>
+      <div class="hs"><div class="hv">9</div><div class="hl">ألعاب</div></div>
       <div class="hs-div"></div>
       <div class="hs"><div class="hv">30+</div><div class="hl">سؤالاً</div></div>
       <div class="hs-div"></div>
@@ -341,11 +444,29 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
         <div class="mc-title">أكمل العبارة</div>
         <div class="mc-desc">أكمل اقتباسات من إصدارات المجمع باختيار الكلمة المناسبة</div>
       </div>
-      <div class="mc" onclick="startCross()">
-        <div class="mc-badge new">🆕 حصري</div>
-        <span class="mc-icon">⊞</span>
-        <div class="mc-title">الكلمات المتقاطعة</div>
-        <div class="mc-desc">كلمات متقاطعة من مصطلحات كتب المجمع اللغوية</div>
+      <div class="mc" onclick="startMeaning()">
+        <div class="mc-badge new">🆕 جديد</div>
+        <span class="mc-icon">🔍</span>
+        <div class="mc-title">ما معنى الكلمة؟</div>
+        <div class="mc-desc">كلمة مظللة من نصوص المجمع — اختر معناها الصحيح</div>
+      </div>
+      <div class="mc" onclick="startCover()">
+        <div class="mc-badge new">📗 جديد</div>
+        <span class="mc-icon">📗</span>
+        <div class="mc-title">مطابقة الغلاف</div>
+        <div class="mc-desc">طابق غلاف الكتاب مع عنوانه أو مؤلفه أو مساره البحثي</div>
+      </div>
+      <div class="mc" onclick="startHunter()">
+        <div class="mc-badge new">🎯 جديد</div>
+        <span class="mc-icon">🎯</span>
+        <div class="mc-title">صائد الأخطاء</div>
+        <div class="mc-desc">اكتشف الخطأ اللغوي المخفي في نص من إصدارات المجمع</div>
+      </div>
+      <div class="mc" onclick="startKids()">
+        <div class="mc-badge new" style="background:#FFF0F5;color:#880E4F;border-color:#F48FB1">👦 للأطفال</div>
+        <span class="mc-icon">🌟</span>
+        <div class="mc-title">أطفال العربية</div>
+        <div class="mc-desc">ألعاب وأسئلة ممتعة للأطفال من سلسلة أطفال العربية</div>
       </div>
     </div>
   </div>
@@ -414,8 +535,10 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   <div class="pbar"><div class="pbar-fill" id="m-prog" style="width:0%"></div></div>
   <div class="gbody">
     <div class="map-card">
-      <div class="map-top"><div class="cnt-flag" id="m-fl">🌍</div>
-        <div class="map-info"><h3>من أنا؟ خمّن الدولة</h3><p id="m-sub"></p></div></div>
+      <div class="map-top">
+        <div class="cnt-lamp">💡</div>
+        <div class="map-info"><h3>من أنا؟ خمّن الدولة</h3><p id="m-sub"></p></div>
+      </div>
       <div class="facts-list" id="m-facts"></div>
     </div>
     <div class="opts" id="m-opts"></div>
@@ -468,34 +591,101 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   </div>
 </div>
 
-<!-- ═══════ MODE 6: الكلمات المتقاطعة ═══════ -->
-<div class="screen" id="s-cross">
+
+<!-- ═══════ MODE 6: ما معنى الكلمة المظللة ═══════ -->
+<div class="screen" id="s-meaning">
   <div class="ghdr">
     <button class="gbtn" onclick="goHome()">← رئيسية</button>
-    <div class="ghdr-l"><span class="ghdr-ico">⊞</span><span class="ghdr-nm">الكلمات المتقاطعة</span></div>
+    <div class="ghdr-l"><span class="ghdr-ico">🔍</span><span class="ghdr-nm">ما معنى الكلمة؟</span></div>
     <div class="ghdr-stats">
-      <div class="gstat"><div class="gv" id="cr-solved">0</div><div class="gl">محلول</div></div>
-      <div class="gstat"><div class="gv" id="cr-pts">0</div><div class="gl">نقطة</div></div>
+      <div class="gstat"><div class="gv" id="mn-q">1/8</div><div class="gl">سؤال</div></div>
+      <div class="gstat"><div class="gv" id="mn-pts">0</div><div class="gl">نقطة</div></div>
     </div>
   </div>
-  <div class="pbar"><div class="pbar-fill" id="cr-prog" style="width:0%"></div></div>
-  <div class="cross-body">
-    <div class="cross-msg" id="cr-msg">أدخل الحروف وانقر تحقق عند الانتهاء</div>
-    <div class="cross-layout">
-      <div class="grid-wrap"><table class="cross-grid" id="cr-grid"></table></div>
-      <div class="clues-wrap">
-        <div>
-          <div class="clues-section"><h4>↔ أفقي</h4><div id="cr-across"></div></div>
-          <div class="clues-section" style="margin-top:10px"><h4>↕ رأسي</h4><div id="cr-down"></div></div>
-        </div>
+  <div class="pbar"><div class="pbar-fill" id="mn-prog" style="width:0%"></div></div>
+  <div class="gbody">
+    <div class="card" style="padding:20px 24px;max-width:640px;">
+      <div class="stag" id="mn-src"></div>
+      <div id="mn-sentence" style="font-size:15px;color:var(--green);line-height:2.2;margin:12px 0;text-align:center;"></div>
+      <div style="font-size:11px;color:var(--green3);text-align:center;">الكلمة المظللة بالأخضر — ما معناها؟</div>
+    </div>
+    <div class="opts" id="mn-opts"></div>
+    <div class="fb2" id="mn-fb"></div>
+    <button class="next-btn" id="mn-next" onclick="nextMn()">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══════ MODE 7: مطابقة الغلاف ═══════ -->
+<div class="screen" id="s-cover">
+  <div class="ghdr">
+    <button class="gbtn" onclick="goHome()">← رئيسية</button>
+    <div class="ghdr-l"><span class="ghdr-ico">📗</span><span class="ghdr-nm">مطابقة الغلاف</span></div>
+    <div class="ghdr-stats">
+      <div class="gstat"><div class="gv" id="cv-q">1/6</div><div class="gl">سؤال</div></div>
+      <div class="gstat"><div class="gv" id="cv-pts">0</div><div class="gl">نقطة</div></div>
+    </div>
+  </div>
+  <div class="pbar"><div class="pbar-fill" id="cv-prog" style="width:0%"></div></div>
+  <div class="gbody">
+    <div id="cv-card" style="width:100%;max-width:620px;background:#FFF;border:2px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);">
+      <div id="cv-cover" style="height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;font-size:13px;color:#FFF;font-weight:700;padding:20px;text-align:center;"></div>
+      <div style="padding:14px 18px;">
+        <div id="cv-question" style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px;text-align:center;"></div>
+        <div id="cv-opts" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
       </div>
     </div>
-    <div class="cross-prog"><b id="cr-filled">0</b> / <b id="cr-total">0</b> خانة</div>
-    <div class="cross-actions">
-      <button class="check-btn" onclick="checkCross()">✅ تحقق من الإجابات</button>
-      <button class="reveal-btn sec-btn" onclick="revealCross()">💡 كشف الإجابة</button>
-      <button class="reveal-btn sec-btn" onclick="clearCross()">⌫ مسح الكل</button>
+    <div class="fb2" id="cv-fb"></div>
+    <button class="next-btn" id="cv-next" onclick="nextCv()">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══════ MODE 8: صائد الأخطاء ═══════ -->
+<div class="screen" id="s-hunter">
+  <div class="ghdr">
+    <button class="gbtn" onclick="goHome()">← رئيسية</button>
+    <div class="ghdr-l"><span class="ghdr-ico">🎯</span><span class="ghdr-nm">صائد الأخطاء</span></div>
+    <div class="ghdr-stats">
+      <div class="gstat"><div class="gv" id="ht-q">1/7</div><div class="gl">نص</div></div>
+      <div class="gstat"><div class="gv" id="ht-pts">0</div><div class="gl">نقطة</div></div>
     </div>
+  </div>
+  <div class="pbar"><div class="pbar-fill" id="ht-prog" style="width:0%"></div></div>
+  <div class="gbody">
+    <div style="font-size:12px;color:var(--green3);text-align:center;">
+      📌 انقر على الكلمة الخاطئة في النص أدناه
+    </div>
+    <div id="ht-card" style="width:100%;max-width:640px;background:#FFF;border:2px solid var(--border);border-radius:16px;padding:22px 26px;box-shadow:var(--shadow);">
+      <div class="stag" id="ht-src" style="margin-bottom:10px;"></div>
+      <div id="ht-text" style="font-size:15px;color:var(--green);line-height:2.4;text-align:right;"></div>
+    </div>
+    <div class="fb2" id="ht-fb"></div>
+    <div id="ht-correction" style="display:none;width:100%;max-width:640px;background:var(--greenXL);border:1.5px solid var(--green3);border-radius:12px;padding:14px 18px;font-size:12.5px;color:var(--green);line-height:1.8;"></div>
+    <button class="next-btn" id="ht-next" onclick="nextHt()">التالي ←</button>
+  </div>
+</div>
+
+
+
+<!-- ═══════ MODE KIDS: أطفال العربية ═══════ -->
+<div class="screen" id="s-kids">
+  <div class="ghdr">
+    <button class="gbtn" onclick="goHome()">← رئيسية</button>
+    <div class="ghdr-l"><span class="ghdr-ico">👦</span><span class="ghdr-nm">أطفال العربية</span></div>
+    <div class="ghdr-stats">
+      <div class="gstat"><div class="gv" id="k-q">1/10</div><div class="gl">سؤال</div></div>
+      <div class="gstat"><div class="gv" id="k-pts">0</div><div class="gl">نقطة</div></div>
+    </div>
+  </div>
+  <div class="pbar"><div class="pbar-fill" id="k-prog" style="width:0%"></div></div>
+  <div class="gbody">
+    <div id="k-card" style="width:100%;max-width:580px;background:#FFF;border:2.5px solid var(--border);border-radius:20px;padding:22px 24px;box-shadow:var(--shadow);text-align:center;">
+      <div id="k-emoji" style="font-size:72px;margin-bottom:10px;animation:bob 2s ease-in-out infinite;display:block;"></div>
+      <div id="k-series" style="font-size:10px;color:var(--greenL);font-weight:700;margin-bottom:5px;"></div>
+      <div id="k-question" style="font-size:18px;font-weight:900;color:var(--green);line-height:1.6;margin-bottom:4px;"></div>
+    </div>
+    <div id="k-opts" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:580px;"></div>
+    <div class="fb2" id="k-fb"></div>
+    <button class="next-btn" id="k-next" onclick="nextK()" style="font-size:15px;padding:13px 38px;">التالي ←</button>
   </div>
 </div>
 
@@ -650,22 +840,23 @@ const BQ=[
 
 const CROSSWORD = {
   size: 9,
-  // [row][col] = {letter, isBlack}
-  // null = black cell
-  // We define words:
+  // كلمات مدققة من إصدارات مجمع الملك سلمان العالمي للغة العربية
+  // الشبكة 9×9 — الاتجاه RTL (الأفقي يبدأ من اليمين)
+  // أفقي: col = عمود أول حرف من اليمين، ينقص باتجاه اليسار
+  // رأسي: row = صف أول حرف من الأعلى، يزيد للأسفل
   across: [
-    {num:1, row:0, col:6, word:"نحو",   clue:"علم ضبط الكلام وإعراب الجمل"},
-    {num:3, row:2, col:7, word:"صرف",   clue:"علم أبنية الكلمة وأوزانها"},
-    {num:5, row:4, col:8, word:"دلالة", clue:"علم المعنى في إصدارات المجمع"},
-    {num:7, row:6, col:7, word:"إبل",   clue:"حيوان أفرد له المجمع كتاباً كاملاً"},
-    {num:9, row:8, col:8, word:"معجم",  clue:"قاموس اللغة — من اهتمامات المجمع"},
+    {num:1, row:0, col:8, word:"نحو",    clue:"علم ضبط الكلام وإعراب الجمل — من علوم اللغة التي درسها المجمع"},
+    {num:2, row:2, col:8, word:"صرف",    clue:"علم أبنية الكلمة وأوزانها — مرتبط بسلسلة مباحث لغوية"},
+    {num:3, row:4, col:8, word:"دلالة",  clue:"علم معاني الألفاظ — درسه المجمع في كتاب التطور الدلالي"},
+    {num:4, row:6, col:8, word:"إبل",    clue:"حيوان أفرد له المجمع كتاب مُسمّيات الإبل كاملاً"},
+    {num:5, row:8, col:8, word:"معجم",   clue:"قاموس اللغة — من أهم أدوات علماء اللغة"},
   ],
   down: [
-    {num:1, row:0, col:6, word:"نص",    clue:"وحدة لغوية مكتوبة أو منطوقة"},
-    {num:2, row:0, col:4, word:"صحافة", clue:"وسيلة إعلامية درس المجمع تطور لغتها"},
-    {num:4, row:2, col:2, word:"لغة",   clue:"ما يخدمه مجمع الملك سلمان"},
-    {num:6, row:1, col:0, word:"ترجمة", clue:"نقل المعنى بين لغتين بأمانة"},
-    {num:8, row:4, col:6, word:"بلاغة", clue:"علم جمال الكلام: معانٍ وبيان وبديع"},
+    {num:1, row:0, col:8, word:"ندوة",   clue:"تجمع علمي — للمجمع إصدارات وقائع ندوات متعددة"},
+    {num:6, row:0, col:5, word:"صحافة",  clue:"وسيلة إعلامية — درس المجمع تطور لغتها في كتاب متخصص"},
+    {num:7, row:2, col:3, word:"لغة",    clue:"ما يخدمه مجمع الملك سلمان العالمي"},
+    {num:8, row:0, col:1, word:"ترجمة",  clue:"نقل المعنى بين لغتين — من مباحث المجمع اللغوية"},
+    {num:9, row:4, col:6, word:"بلاغة",  clue:"علم جمال الكلام — المعاني والبيان والبديع"},
   ]
 };
 
@@ -888,7 +1079,7 @@ function showResult(pts,mode,facts){
   $('r-title').textContent=pts>=150?'استثنائي! موسوعة لغوية!':pts>=80?'رائع! معرفة ممتازة!':'جرّب مجدداً!';
   $('r-pts').textContent=pts;
   $('r-facts').innerHTML=`<div class="rf">✦ من إصدارات <b>مجمع الملك سلمان العالمي للغة العربية</b></div>`+facts.map(f=>`<div class="rf">${f}</div>`).join('');
-  $('r-retry').onclick=()=>{ if(mode==='j')startJourney();else if(mode==='c')startCrown();else if(mode==='m')startMap();else if(mode==='mt')startMatch();else if(mode==='b')startBlank();else startCross(); };
+  $('r-retry').onclick=()=>{ if(mode==='j')startJourney();else if(mode==='c')startCrown();else if(mode==='m')startMap();else if(mode==='mt')startMatch();else if(mode==='b')startBlank();else if(mode==='kids')startKids();else if(mode==='mn')startMeaning();else if(mode==='cv')startCover();else if(mode==='ht')startHunter();else startMeaning(); };
   show('s-result');
 }
 
@@ -993,8 +1184,8 @@ function ansM(ok,btn,correct){
   document.querySelectorAll('#m-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
   const fb=$('m-fb');
   if(ok){btn.classList.add('correct');mPtsm+=20;$('m-pts').textContent=mPtsm;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ صحيح! ${mD[mIm].f} <b>${correct}</b> — +20 نقطة`;toast('🌍 +20 نقطة');}
-  else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: ${mD[mIm].f} <b>${correct}</b>`;toast('❌ حاول في التالية!');}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ صحيح! 🌍 <b>${correct}</b> — +20 نقطة`;toast('🌍 +20 نقطة');}
+  else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: 🌍 <b>${correct}</b>`;toast('❌ حاول في التالية!');}
   $('m-next').style.display='block';mIm++;
   if(mIm>=mD.length)$('m-next').textContent='النتيجة 🏆';
 }
@@ -1057,6 +1248,488 @@ function ansB(ok,btn,ci,opts,explain,origQ){
   if(bI>=bQs.length)$('b-next').textContent='النتيجة 🏆';
 }
 function nextB(){if(bI>=bQs.length){showResult(bPtsb,'b',[`✏️ أكملت <b>${bQs.length} عبارات</b> من إصدارات المجمع`,`💡 نقاطك: <b>${bPtsb}</b> من أصل ${bQs.length*25}`]);return;}loadB();}
+
+
+/* ════════ CATEGORIES DATA ════════ */
+const CATS = {
+  /* السلاسل الحقيقية من المكتبة الرقمية لمجمع الملك سلمان */
+
+  "الندوات والمؤتمرات": {
+    icon:"🎤", color:"#0A3D1E",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"وقائع ندوات ومؤتمرات المجمع العلمية",
+    books:[
+      {t:"المدونات اللغوية العربية: بناؤها وطرائق الإفادة منها",s:"مباحث لغوية 41",url:"https://library.ksaa.gov.sa/links/epubs/Arabic-Corpora.pdf"},
+      {t:"وقائع ندوة اللغة العربية في وسائل التواصل الاجتماعي",s:"وقائع الندوات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"وقائع ندوة مسمّيات الإبل في الموروث العربي",s:"وقائع الندوات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"وقائع ندوة التعريب وتوحيد المصطلح العلمي",s:"وقائع الندوات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"وقائع ملتقى تعليم اللغة العربية لغير الناطقين بها",s:"وقائع الملتقيات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"وقائع ندوة اللغة العربية والذكاء الاصطناعي",s:"وقائع الندوات",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "المباحث اللغوية": {
+    icon:"🔬", color:"#5A6B5C",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"سلسلة مباحث لغوية — دراسات بحثية متخصصة",
+    books:[
+      {t:"مباحث في نظام الكتابة العربية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/links/epubs/alaemal_altatbiqiat_fi_alkitabat_alearabia.pdf"},
+      {t:"الأعمال التطبيقية في الكتابة العربية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/links/epubs/alaemal_altatbiqiat_fi_alkitabat_alearabia.pdf"},
+      {t:"تطبيقات الذكاء الاصطناعي في خدمة اللغة العربية",s:"مباحث لغوية 95",url:"https://library.ksaa.gov.sa/links/epubs/Ai-apps.pdf"},
+      {t:"الاستعارة النحوية وتحليل الخطاب العربي",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"التطور الدلالي في لغة الصحافة السعودية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"مُسمّيات الإبل — دراسة لغوية تاريخية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"الاقتراض من اللغة العربية في اللغة التركية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"التدبر النحوي للقرآن الكريم",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"علم اللغة الاجتماعي في الوطن العربي",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"تعليم اللغة العربية لأغراض خاصة",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/links/epubs/taelim_allughat_alearabiat_liaghrad_khasa.pdf"},
+      {t:"المرجع في تعليم اللغة لأغراض خاصة",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/links/epubs/almarjie_fi_taelim_allughat_alearabiat_liaghrad_khasa.pdf"},
+      {t:"تعلم العربية والهوية اللغوية",s:"مباحث لغوية",url:"https://library.ksaa.gov.sa/links/epubs/taealum_alearabia.pdf"},
+    ]
+  },
+
+  "الأدلة والمعلومات": {
+    icon:"📋", color:"#124D28",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"أدلة المجمع ومطبوعاته المرجعية",
+    books:[
+      {t:"دليل الإصدارات البحثية والعلمية لمجمع الملك سلمان",s:"الأدلة",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"100 سؤال عن اللغة العربية",s:"الأدلة",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دليل السلاسل التعليمية لتعليم اللغة العربية",s:"الأدلة",url:"https://library.ksaa.gov.sa/links/epubs/dalil_alsalasil_altaelimia2.pdf"},
+      {t:"موجز تاريخ اللغة العربية في منظمة الأمم المتحدة",s:"الأدلة",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دليل الباحث في اللغة العربية",s:"الأدلة",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دليل مصطلحات الحوسبة اللغوية",s:"الأدلة",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "الرسائل الجامعية": {
+    icon:"🎓", color:"#475A49",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"الرسائل العلمية والأعمال الجامعية المنشورة",
+    books:[
+      {t:"مجمع اللغويين السعوديين ونتاجهم البحثي",s:"الرسائل والأبحاث",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في الخطاب الأكاديمي",s:"الرسائل والأبحاث",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"الكفاءة اللغوية لطلاب الجامعات السعودية",s:"الرسائل والأبحاث",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"مناهج اللغة العربية في التعليم العالي",s:"الرسائل والأبحاث",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"الدراسات اللغوية في الجامعات العربية",s:"الرسائل والأبحاث",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "العربية في العالم": {
+    icon:"🌍", color:"#1A5E31",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"سلسلة واقع اللغة العربية في دول العالم",
+    books:[
+      {t:"اللغة العربية في تشاد",s:"العربية في العالم 2024",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في تايلند",s:"العربية في العالم 2024",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في قرغيزستان — دراسة وصفية تحليلية نقدية",s:"العربية في العالم 2024",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في جزر القمر",s:"العربية في العالم 2024",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في فرنسا",s:"العربية في العالم 2024",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في روسيا",s:"العربية في العالم 2023",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في ماليزيا",s:"العربية في العالم 2023",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في إندونيسيا",s:"العربية في العالم 2023",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في الصين",s:"العربية في العالم 2023",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في منظمة التعاون الإسلامي",s:"العربية في العالم 2023",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في كوريا الجنوبية",s:"العربية في العالم 2022",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في ألمانيا",s:"العربية في العالم 2022",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في تركيا",s:"العربية في العالم 2022",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "السياسات والمعايير": {
+    icon:"⚖️", color:"#5A6B5C",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"التخطيط والسياسات اللغوية ومعايير الكفاءة",
+    books:[
+      {t:"السياسة اللغوية في الوطن العربي",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"معايير الكفاءة في اللغة العربية",s:"المعايير",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية والتشريع الدولي",s:"السياسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"معيارية اللغة العربية في العصر الرقمي",s:"المعايير",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"السياسات اللغوية المقارنة",s:"السياسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في المنظمات الدولية",s:"السياسات",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "التخطيط اللغوي": {
+    icon:"🗺️", color:"#22743C",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"مسار التخطيط والسياسة اللغوية للمجمع",
+    books:[
+      {t:"التخطيط اللغوي — المفاهيم والنماذج والتطبيقات",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية في خطط التنمية الوطنية",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"مستقبل اللغة العربية في ضوء التحولات الرقمية",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"نحو استراتيجية عربية لصون اللغة وتعزيزها",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"اللغة العربية وأهداف التنمية المستدامة 2030",s:"التخطيط اللغوي",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "أطفال العربية": {
+    icon:"👦", color:"#475A49",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"سلسلة أطفال العربية — 30 كتاباً للأعمار 6–12",
+    books:[
+      {t:"سلسلة أطفال العربية — مسار القصص الأدبية (10 كتب)",s:"أطفال العربية 2025",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"سلسلة أطفال العربية — مسار المعرفة اللغوية (10 كتب)",s:"أطفال العربية 2025",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"سلسلة أطفال العربية — مسار المغامرة والاكتشاف (10 كتب)",s:"أطفال العربية 2025",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "المحاضرات": {
+    icon:"🎙️", color:"#0A3D1E",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"برنامج المحاضرات العلمية — علماء ومتخصصون",
+    books:[
+      {t:"علم اللغة الاجتماعي في الوطن العربي: محاور ونظريات",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: اللغة العربية والهوية الوطنية",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: مستقبل اللغة العربية في عالم متغير",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: العربية في زمن الذكاء الاصطناعي",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: البلاغة العربية والخطاب المعاصر",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: الإبل في الموروث العربي اللغوي",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: القرآن الكريم واللغة العربية",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"محاضرة: تعليم اللغة العربية لغير الناطقين بها",s:"المحاضرات العلمية",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+
+  "الدراسات": {
+    icon:"📑", color:"#5A6B5C",
+    url:"https://library.ksaa.gov.sa/index/book",
+    desc:"الدراسات والبحوث المنشورة في مجلات المجمع",
+    books:[
+      {t:"معالجة اللغات الطبيعية للويب الدلالي",s:"الدراسات 61",url:"https://library.ksaa.gov.sa/links/epubs/semantic-web.pdf"},
+      {t:"دراسات في الترجمة والتعريب",s:"الدراسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"الدراسات اللغوية — مجلة لسانيات، العدد الأول",s:"المجلات",url:"https://library.ksaa.gov.sa/links/emags/u2.pdf"},
+      {t:"مجلة لسانيات — العدد التاسع",s:"المجلات",url:"https://library.ksaa.gov.sa/links/emags/lesaneyat_09.pdf"},
+      {t:"دراسات في التعليم اللغوي المعاصر",s:"الدراسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دراسات في الأسلوبية العربية",s:"الدراسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دراسات في اللغة العربية وتكنولوجيا المعلومات",s:"الدراسات",url:"https://library.ksaa.gov.sa/index/book"},
+      {t:"دراسات في التخطيط اللغوي المقارن",s:"الدراسات",url:"https://library.ksaa.gov.sa/index/book"},
+    ]
+  },
+};
+
+function openCatPanel(catName) {
+  const cat = CATS[catName];
+  if(!cat) return;
+  document.getElementById('cat-icon').textContent = cat.icon;
+  document.getElementById('cat-title').textContent = catName;
+  document.getElementById('cat-sub').textContent = `${cat.books.length} إصداراً من مجمع الملك سلمان`;
+  document.getElementById('cat-count').textContent = `إجمالي: ${cat.books.length} كتاب`;
+  const body = document.getElementById('cat-body');
+  body.innerHTML = cat.books.map((b,i) => `
+    <a class="book-list-item" href="${b.url || cat.url}" target="_blank">
+      <div class="bli-num" style="background:${cat.color}">${i+1}</div>
+      <div class="bli-info">
+        <div class="bli-title">${b.t}</div>
+        <div class="bli-year">📚 ${b.s} · مجمع الملك سلمان العالمي للغة العربية ↗</div>
+      </div>
+      <div class="bli-arrow" style="color:var(--green);font-size:16px">←</div>
+    </a>`).join('');
+  document.getElementById('catPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('catPanel').classList.remove('open');
+}
+
+function closeCatPanel(e) {
+  if(e.target === document.getElementById('catPanel')) closePanel();
+}
+
+/* ════════ KIDS ════════ */
+const KIDS_Q = [
+  {emoji:"🔤",series:"أطفال العربية",q:"كم حرفاً في الأبجدية العربية؟",opts:["24 حرفاً","26 حرفاً","28 حرفاً","30 حرفاً"],ok:2,e:"الأبجدية العربية تتكون من 28 حرفاً جميلاً!"},
+  {emoji:"🌙",series:"أطفال العربية",q:"ما عكس كلمة 'ليل'؟",opts:["مساء","نهار","فجر","ظلام"],ok:1,e:"عكس الليل هو النهار — وكلاهما آية من آيات الله!"},
+  {emoji:"📚",series:"أطفال العربية",q:"ما جمع كلمة 'كتاب'؟",opts:["كتابات","كتب","كتيبات","كتابان"],ok:1,e:"جمع كتاب هو كُتُب — حافظ على كتبك فهي كنزك!"},
+  {emoji:"🐪",series:"أطفال العربية",q:"ما اسم صغير الجمل؟",opts:["عجل","جحش","حوار","فصيل"],ok:3,e:"صغير الجمل يُسمّى 'الفصيل' أو 'الحوار' — وكلاهما صحيح!"},
+  {emoji:"🌺",series:"أطفال العربية",q:"كيف تقول 'مرحباً' في لغة القرآن؟",opts:["أهلاً وسهلاً","مرحباً","السلام عليكم","أهلاً"],ok:2,e:"السلام عليكم هي أجمل تحية في اللغة العربية والإسلام!"},
+  {emoji:"🌊",series:"أطفال العربية",q:"ما الحرف الذي يبدأ به اسم 'أسد'؟",opts:["أ","ب","ع","ص"],ok:0,e:"أسد يبدأ بحرف الألف — أمير الغابة وأمير الحروف!"},
+  {emoji:"✏️",series:"أطفال العربية",q:"ما عدد نقاط حرف 'ث'؟",opts:["نقطة","نقطتان","ثلاث نقاط","بلا نقاط"],ok:2,e:"حرف الثاء له ثلاث نقاط فوقه — مثل ثلاثة أصدقاء!"},
+  {emoji:"🦁",series:"أطفال العربية",q:"ما نقيض كلمة 'صغير'؟",opts:["طويل","كبير","قصير","ضخم"],ok:1,e:"نقيض صغير هو كبير — كما أن النقيض لهو والليل نهار!"},
+  {emoji:"🌟",series:"أطفال العربية",q:"كم حرفاً في كلمة 'عربية'؟",opts:["4","5","6","7"],ok:2,e:"ع-ر-ب-ي-ة = 6 حروف في أجمل لغة في العالم!"},
+  {emoji:"🎨",series:"أطفال العربية",q:"ما المؤنث من كلمة 'طالب'؟",opts:["طالبة","مطلوبة","طلاب","طلبة"],ok:0,e:"مؤنث طالب هو طالبة — وأنتِ طالبة متميزة!"},
+];
+
+let kQs,kI,kPtsk,kAnsk;
+function startKids(){kQs=shuf([...KIDS_Q]);kI=0;kPtsk=0;loadK();show('s-kids');}
+function loadK(){
+  kAnsk=false;const q=kQs[kI];
+  $('k-q').textContent=`${kI+1}/${kQs.length}`;$('k-pts').textContent=kPtsk;
+  $('k-prog').style.width=`${(kI/kQs.length)*100}%`;
+  $('k-next').style.display='none';$('k-fb').classList.remove('show','ok','err');
+  $('k-emoji').textContent=q.emoji;
+  $('k-series').textContent=q.series;
+  $('k-question').textContent=q.q;
+  const og=$('k-opts');og.innerHTML='';
+  shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
+    const btn=document.createElement('button');
+    btn.style.cssText='background:#FFF;border:2px solid rgba(10,61,30,.15);border-radius:14px;padding:14px 12px;font-size:14px;font-weight:700;color:var(--green);cursor:pointer;text-align:center;font-family:var(--font);transition:all .2s;line-height:1.4;';
+    btn.textContent=o;
+    btn.onmouseover=()=>{if(!btn.disabled)btn.style.borderColor='var(--green)';btn.style.background='var(--greenXL)';};
+    btn.onmouseout=()=>{if(!btn.disabled&&!btn.classList.contains('correct')&&!btn.classList.contains('wrong')){btn.style.borderColor='rgba(10,61,30,.15)';btn.style.background='#FFF';}};
+    btn.onclick=()=>ansK(i===q.ok,btn,q.ok,q.opts,q.e);og.appendChild(btn);
+  });
+}
+function ansK(ok,btn,ci,opts,e){
+  if(kAnsk)return;kAnsk=true;
+  document.querySelectorAll('#k-opts button').forEach(b=>{b.disabled=true;if(b.textContent===opts[ci]){b.style.background='#E8F5EC';b.style.borderColor='#2E7D32';b.style.color='#1B5E20';}});
+  const fb=$('k-fb');
+  if(ok){btn.style.background='#E8F5EC';btn.style.borderColor='#2E7D32';btn.style.color='#1B5E20';
+    kPtsk+=20;$('k-pts').textContent=kPtsk;
+    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>أحسنت! +20 نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');}
+  else{btn.style.background='#FFEBEE';btn.style.borderColor='#C62828';btn.style.color='#B71C1C';
+    fb.className='fb2 err show';fb.innerHTML=`💪 الصحيح: <b>${opts[ci]}</b><br>✨ ${e}`;toast('💪 حاول في السؤال التالي!');}
+  $('k-next').style.display='block';kI++;
+  if(kI>=kQs.length)$('k-next').textContent='النتيجة 🏆';
+}
+function nextK(){
+  if(kI>=kQs.length){showResult(kPtsk,'kids',[
+    `👦 أجبت عن <b>${kQs.length} أسئلة</b> من سلسلة أطفال العربية`,
+    `🌟 نقاطك: <b>${kPtsk}</b> من أصل ${kQs.length*20}`,
+    `📚 استمر في تعلم لغتك العربية الجميلة!`,
+  ]);return;}loadK();
+}
+
+/* ════════ ما معنى الكلمة المظللة ════════ */
+const MN_Q = [
+  {src:"مباحث لغوية — التطور الدلالي في الصحافة السعودية",
+   sentence:"يُعدّ <mark>التطور الدلالي</mark> من أبرز الظواهر التي ترصدها الدراسات اللغوية الحديثة.",
+   word:"التطور الدلالي",
+   opts:["تغيّر معنى الكلمة عبر الزمن","دراسة أصوات اللغة","تحليل بنية الجملة","حفظ التراث اللغوي"],ok:0,
+   explain:"التطور الدلالي = تغيّر معنى الكلمة بتأثير العوامل الاجتماعية والزمنية، وهو محور كتاب المجمع."},
+  {src:"مباحث لغوية — علم اللغة الاجتماعي",
+   sentence:"تُوظَّف <mark>اللسانيات الاجتماعية</mark> في دراسة العلاقة بين اللغة والمجتمع.",
+   word:"اللسانيات الاجتماعية",
+   opts:["علم يدرس علاقة اللغة بالمجتمع","علم أصوات اللغة","نحو الجملة العربية","معجم اللغة"],ok:0,
+   explain:"اللسانيات الاجتماعية (Sociolinguistics) = دراسة تأثير المجتمع في اللغة وتنوعاتها."},
+  {src:"مباحث لغوية — مسمّيات الإبل",
+   sentence:"يُبرز الكتاب ثراء المعجم العربي من خلال رصد <mark>المترادفات</mark> في أسماء الإبل.",
+   word:"المترادفات",
+   opts:["الكلمات المختلفة بمعنى واحد","الكلمات المتضادة","الكلمات الأجنبية","حروف العطف"],ok:0,
+   explain:"المترادفات = كلمات مختلفة تشترك في المعنى الواحد — كتسميات الجمل في العربية."},
+  {src:"مباحث لغوية — الاقتراض اللغوي",
+   sentence:"يُحلل الكتاب ظاهرة <mark>الاقتراض اللغوي</mark> بين العربية والتركية.",
+   word:"الاقتراض اللغوي",
+   opts:["أخذ ألفاظ من لغة إلى أخرى","ترجمة النصوص الأدبية","التحول من لهجة لأخرى","تبادل الكتب"],ok:0,
+   explain:"الاقتراض اللغوي = انتقال الكلمات من لغة إلى أخرى بسبب التواصل الحضاري."},
+  {src:"مباحث لغوية — التخطيط اللغوي",
+   sentence:"يُعرَّف <mark>التخطيط اللغوي</mark> بأنه جملة القرارات التي تتخذها مؤسسات رسمية بشأن اللغة.",
+   word:"التخطيط اللغوي",
+   opts:["وضع سياسات تنظّم استخدام اللغة","تعليم اللغة لغير الناطقين بها","ترجمة الكتب العلمية","كتابة المعاجم"],ok:0,
+   explain:"التخطيط اللغوي = مسار استراتيجي يعمل فيه المجمع لتعزيز اللغة العربية ورسم سياساتها."},
+  {src:"مباحث لغوية — البلاغة العربية",
+   sentence:"تُعدّ <mark>الاستعارة</mark> من أرقى أساليب البلاغة العربية وأكثرها توظيفاً في النصوص الأدبية.",
+   word:"الاستعارة",
+   opts:["استخدام لفظ في غير معناه لوجه شبه","تكرار الكلمة للتأكيد","الوصف الدقيق للأشياء","السجع في الكلام"],ok:0,
+   explain:"الاستعارة = إحدى صور البيان في البلاغة العربية، ودرسها المجمع في كتاب الاستعارة النحوية."},
+  {src:"مباحث لغوية — الحوسبة اللغوية",
+   sentence:"تعتمد <mark>معالجة اللغة الطبيعية</mark> على خوارزميات حاسوبية لتحليل النصوص العربية.",
+   word:"معالجة اللغة الطبيعية",
+   opts:["تحليل اللغة البشرية بالحاسوب","ترجمة لغة البرمجة","دراسة لغات الأطفال","تعليم اللغة التقليدي"],ok:0,
+   explain:"معالجة اللغة الطبيعية (NLP) = مجال في الذكاء الاصطناعي درسه المجمع في إصداراته."},
+  {src:"سلسلة العربية في العالم",
+   sentence:"تتّخذ دول عديدة من العربية لغةً <mark>رسمية</mark> في دساتيرها ووثائقها الرسمية.",
+   word:"رسمية",
+   opts:["معتمدة رسمياً من الدولة","مقتصرة على العلماء","مستخدمة في الشعر فقط","محكية في التجارة"],ok:0,
+   explain:"اللغة الرسمية = اللغة التي تعترف بها الدولة في مؤسساتها، وهو ما يرصده المجمع في سلسلته."},
+];
+
+let mnQs,mnI,mnPts,mnAns;
+function startMeaning(){mnQs=shuf([...MN_Q]);mnI=0;mnPts=0;loadMn();show('s-meaning');}
+function loadMn(){
+  mnAns=false;const q=mnQs[mnI];
+  $('mn-q').textContent=`${mnI+1}/${mnQs.length}`;$('mn-pts').textContent=mnPts;
+  $('mn-prog').style.width=`${(mnI/mnQs.length)*100}%`;
+  $('mn-next').style.display='none';$('mn-fb').classList.remove('show','ok','err');
+  $('mn-src').textContent=q.src;
+  // render sentence with highlighted word
+  $('mn-sentence').innerHTML=q.sentence.replace('<mark>',`<span class="highlight-word">`).replace('</mark>','</span>');
+  const og=$('mn-opts');og.innerHTML='';
+  shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
+    const btn=document.createElement('button');btn.className='opt';btn.textContent=o;
+    btn.onclick=()=>{
+      if(mnAns)return;mnAns=true;
+      document.querySelectorAll('#mn-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
+      const fb=$('mn-fb');
+      if(i===q.ok){btn.classList.add('correct');mnPts+=25;$('mn-pts').textContent=mnPts;
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +25 نقطة</b><br>📖 ${q.explain}`;toast('✅ +25 نقطة');}
+      else{btn.classList.add('wrong');
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📖 ${q.explain}`;toast('❌ حاول في التالية!');}
+      $('mn-next').style.display='block';mnI++;
+      if(mnI>=mnQs.length)$('mn-next').textContent='النتيجة 🏆';
+    };og.appendChild(btn);
+  });
+}
+function nextMn(){if(mnI>=mnQs.length){showResult(mnPts,'mn',[`🔍 أجبت عن <b>${mnQs.length} كلمات</b> مظللة من إصدارات المجمع`,`💡 نقاطك: <b>${mnPts}</b> من أصل ${mnQs.length*25}`]);return;}loadMn();}
+
+/* ════════ مطابقة الغلاف ════════ */
+const CV_Q = [
+  {title:"التطور الدلالي في لغة الصحافة السعودية",
+   color:"#0A3D1E",icon:"📰",series:"مباحث لغوية",
+   question:"ما المسار البحثي لهذا الكتاب؟",
+   opts:["مباحث لغوية","أطفال العربية","العربية في العالم","المحاضرات العلمية"],ok:0,
+   explain:"يصدر ضمن سلسلة مباحث لغوية — يدرس تغيّر معاني الكلمات في الصحافة السعودية."},
+  {title:"اللغة العربية في جزر القمر",
+   color:"#1A5E31",icon:"🌊",series:"العربية في العالم",
+   question:"في أي سلسلة يصدر هذا الكتاب؟",
+   opts:["العربية في العالم","المحاضرات العلمية","مباحث لغوية","الأدلة والمعلومات"],ok:0,
+   explain:"يصدر ضمن سلسلة 'واقع اللغة العربية في العالم' لعام 2024."},
+  {title:"مُسمّيات الإبل — دراسة لغوية تاريخية",
+   color:"#5A4020",icon:"🐪",series:"مباحث لغوية",
+   question:"ما الموضوع الرئيسي لهذا الكتاب؟",
+   opts:["الثروة اللفظية للإبل في العربية","تاريخ التجارة العربية","علم الأحياء","أسماء الأماكن"],ok:0,
+   explain:"يرصد الكتاب أكثر من 500 تسمية عربية للإبل — دليل على ثراء اللغة العربية."},
+  {title:"تطبيقات الذكاء الاصطناعي في خدمة اللغة العربية",
+   color:"#1A237E",icon:"🤖",series:"مباحث لغوية 95",
+   question:"ما رقم هذا الكتاب في سلسلة مباحث لغوية؟",
+   opts:["95","41","12","67"],ok:0,
+   explain:"هو العدد 95 في سلسلة مباحث لغوية — يتناول توظيف الذكاء الاصطناعي لخدمة العربية."},
+  {title:"100 سؤال عن اللغة العربية",
+   color:"#880E4F",icon:"❓",series:"الأدلة والمعلومات",
+   question:"ما الغرض الرئيسي من هذا الكتاب؟",
+   opts:["الإجابة عن أسئلة شائعة حول العربية","تعليم النحو","تدريب المترجمين","رصد اللهجات"],ok:0,
+   explain:"كتاب تعريفي يجيب عن 100 سؤال حول اللغة العربية تاريخاً وحاضراً ومستقبلاً."},
+  {title:"اللغة العربية في تايلند",
+   color:"#B71C1C",icon:"🐘",series:"العربية في العالم",
+   question:"أين يتركز الناطقون بالعربية في تايلند؟",
+   opts:["الجنوب الإسلامي","العاصمة بانكوك","الشمال الجبلي","الموانئ الشرقية"],ok:0,
+   explain:"جنوب تايلند — منطقة باتاني — لها تاريخ إسلامي وعربي راسخ منذ قرون."},
+];
+
+let cvQs,cvI,cvPts,cvAns;
+function startCover(){cvQs=shuf([...CV_Q]);cvI=0;cvPts=0;loadCv();show('s-cover');}
+function loadCv(){
+  cvAns=false;const q=cvQs[cvI];
+  $('cv-q').textContent=`${cvI+1}/${cvQs.length}`;$('cv-pts').textContent=cvPts;
+  $('cv-prog').style.width=`${(cvI/cvQs.length)*100}%`;
+  $('cv-next').style.display='none';$('cv-fb').classList.remove('show','ok','err');
+  // Render book cover
+  $('cv-cover').style.background=`linear-gradient(135deg,${q.color},${q.color}CC)`;
+  $('cv-cover').innerHTML=`
+    <div style="font-size:50px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))">${q.icon}</div>
+    <div style="font-size:14px;font-weight:900;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,.4);max-width:320px">${q.title}</div>
+    <div style="font-size:10px;opacity:.75;margin-top:4px;letter-spacing:.5px">مجمع الملك سلمان العالمي للغة العربية</div>`;
+  $('cv-question').textContent=q.question;
+  const og=$('cv-opts');og.innerHTML='';
+  shuf(q.opts.map((o,i)=>({o,i}))).forEach(({o,i})=>{
+    const btn=document.createElement('button');btn.className='cv-opt';btn.textContent=o;
+    btn.onclick=()=>{
+      if(cvAns)return;cvAns=true;
+      document.querySelectorAll('#cv-opts .cv-opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
+      const fb=$('cv-fb');
+      if(i===q.ok){btn.classList.add('correct');cvPts+=25;$('cv-pts').textContent=cvPts;
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>صحيح! +25 نقطة</b><br>📗 ${q.explain}`;toast('✅ +25 نقطة');}
+      else{btn.classList.add('wrong');
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📗 ${q.explain}`;toast('❌ حاول في التالية!');}
+      $('cv-next').style.display='block';cvI++;
+      if(cvI>=cvQs.length)$('cv-next').textContent='النتيجة 🏆';
+    };og.appendChild(btn);
+  });
+}
+function nextCv(){if(cvI>=cvQs.length){showResult(cvPts,'cv',[`📗 طابقت <b>${cvQs.length} أغلفة</b> من إصدارات المجمع`,`💡 نقاطك: <b>${cvPts}</b> من أصل ${cvQs.length*25}`]);return;}loadCv();}
+
+/* ════════ صائد الأخطاء ════════ */
+const HT_Q = [
+  {src:"مباحث لغوية — التطور الدلالي",
+   words:["اللغة","العربية","لغة","حية","تتطور","بتطور","المجتمع","وتتغير","معانيها","باستمرار","ومستمر"],
+   errorIdx:10, // "ومستمر" كلمة زائدة — الصواب: حذفها
+   correct:"ومستمر",
+   explanation:"الجملة تحتوي على تكرار المعنى — 'باستمرار' تغني عن 'ومستمر'، والصواب حذف 'ومستمر'."},
+  {src:"مباحث لغوية — الاقتراض اللغوي",
+   words:["دخلت","كلمات","عديدة","من","العربية","إلى","التركية","بفعل","الاحتكاك","الثقافي","والتجاري","والحضري"],
+   errorIdx:11, // "والحضري" — الصواب: "والحضاري"
+   correct:"والحضري",
+   explanation:"الخطأ في كلمة 'والحضري' — والصواب 'والحضاري' نسبةً إلى الحضارة، لا إلى الحضر."},
+  {src:"سلسلة العربية في العالم — تايلند",
+   words:["يُقدّر","عدد","المسلمين","في","جنوب","تايلاند","بنحو","أربعة","ملايين","نسمة"],
+   errorIdx:5, // "تايلاند" — الصواب: "تايلند"
+   correct:"تايلاند",
+   explanation:"الصواب: 'تايلند' — هذا هو الاسم المعتمد في معظم المراجع العربية الرسمية."},
+  {src:"مباحث لغوية — البلاغة العربية",
+   words:["الاستعارة","فن","بلاغي","يقوم","على","تشبيه","شيء","بشيء","آخر","مع","حذف","الأداة","والوجه"],
+   errorIdx:12, // "والوجه" — الاستعارة تحذف الأداة فقط، وقد تحذف وجه الشبه، ليس بالضرورة
+   correct:"والوجه",
+   explanation:"الاستعارة تحذف أداة التشبيه — أما وجه الشبه فيُحذف أحياناً لكنه ليس ركناً محذوفاً دائماً كما يوحي النص."},
+  {src:"مباحث لغوية — الحوسبة اللغوية",
+   words:["تعتمد","تطبيقات","الذكاء","الاصطناعي","على","نماذج","لغوية","ضخمة","لمعالجة","النصوص","العربي"],
+   errorIdx:10, // "العربي" — الصواب: "العربية"
+   correct:"العربي",
+   explanation:"الخطأ النحوي: 'النصوص' مؤنث جمع، فيجب أن يكون النعت 'العربية' لا 'العربي'."},
+  {src:"مباحث لغوية — معاجم الإبل",
+   words:["يُعدّ","المعجم","العربي","من","أغنى","المعاجم","العالمية","في","توثيق","ثروة","الإبل","اللفظية","والبيانية"],
+   errorIdx:12, // "والبيانية" — ليست مصطلحاً دقيقاً هنا، الصواب "والدلالية"
+   correct:"والبيانية",
+   explanation:"المصطلح الدقيق هو 'والدلالية' لا 'والبيانية' — فالدراسة تتناول الدلالات اللفظية لمسمّيات الإبل."},
+  {src:"مباحث لغوية — تعليم العربية",
+   words:["يهدف","الانغماس","اللغوي","إلى","تمكين","المتعلم","من","اكتساب","اللغة","باستخدامها","يومياً","في","بيئتها","الطبيعية","والمصطنعة"],
+   errorIdx:14, // "والمصطنعة" — متعارض مع مفهوم الانغماس الذي هو البيئة الطبيعية
+   correct:"والمصطنعة",
+   explanation:"الانغماس اللغوي يعتمد على البيئة الطبيعية الأصيلة — إضافة 'والمصطنعة' يناقض المفهوم العلمي."},
+];
+
+let htQs,htI,htPts,htAns,htAnswered;
+function startHunter(){htQs=shuf([...HT_Q]);htI=0;htPts=0;loadHt();show('s-hunter');}
+function loadHt(){
+  htAns=false;htAnswered=false;
+  const q=htQs[htI];
+  $('ht-q').textContent=`${htI+1}/${htQs.length}`;$('ht-pts').textContent=htPts;
+  $('ht-prog').style.width=`${(htI/htQs.length)*100}%`;
+  $('ht-next').style.display='none';
+  $('ht-fb').classList.remove('show','ok','err');
+  $('ht-correction').style.display='none';
+  $('ht-src').textContent=q.src;
+  // Render words as clickable spans
+  $('ht-text').innerHTML = q.words.map((w,i)=>
+    `<span class="ht-word" id="hw${i}" onclick="clickWord(${i})">${w}</span> `
+  ).join('');
+}
+function clickWord(idx){
+  if(htAnswered)return;
+  const q=htQs[htI];
+  // Remove previous selection
+  document.querySelectorAll('.ht-word').forEach(w=>w.classList.remove('selected-wrong','selected-correct'));
+  const span=document.getElementById(`hw${idx}`);
+  if(idx===q.errorIdx){
+    span.classList.add('selected-correct');
+    htAnswered=true;htPts+=30;$('ht-pts').textContent=htPts;
+    $('ht-fb').className='fb2 ok show';
+    $('ht-fb').innerHTML=`🎯 <b>أصبت! الخطأ في كلمة "${q.correct}" — +30 نقطة</b>`;
+    $('ht-correction').style.display='block';
+    $('ht-correction').innerHTML=`<b>📝 التصحيح:</b><br>${q.explanation}`;
+    $('ht-next').style.display='block';htI++;
+    if(htI>=htQs.length)$('ht-next').textContent='النتيجة 🏆';
+    toast('🎯 أصبت الخطأ! +30 نقطة');
+  } else {
+    span.classList.add('selected-wrong');
+    toast('❌ هذه ليست الكلمة الخاطئة — حاول مجدداً');
+  }
+}
+function nextHt(){
+  if(htI>=htQs.length){showResult(htPts,'ht',[`🎯 صدت <b>${htQs.length} أخطاء</b> في نصوص المجمع`,`📝 نقاطك: <b>${htPts}</b> من أصل ${htQs.length*30}`,`🔍 صائد الأخطاء يُحسّن مهاراتك اللغوية!`]);return;}
+  loadHt();
+}
+
 </script>
+
+<!-- ══ CATEGORY PANEL ══ -->
+<div class="cat-panel" id="catPanel" onclick="closeCatPanel(event)">
+  <div class="cat-box" id="catBox">
+    <div class="cat-hdr">
+      <div class="cat-hdr-left">
+        <span class="cat-hdr-icon" id="cat-icon">📚</span>
+        <div>
+          <div class="cat-hdr-title" id="cat-title">الفئة</div>
+          <div class="cat-hdr-sub" id="cat-sub">إصدارات المجمع</div>
+        </div>
+      </div>
+      <button class="cat-close" onclick="closePanel()">✕</button>
+    </div>
+    <div class="cat-body" id="cat-body"></div>
+    <div class="cat-footer">
+      <span class="cat-count" id="cat-count"></span>
+      <a class="cat-lib-btn" href="https://library.ksaa.gov.sa/index/book" target="_blank">📖 المكتبة الرقمية الكاملة</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
