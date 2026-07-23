@@ -177,7 +177,21 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .mc-badge.new{background:#FFF8E1;color:#7A5C00;border-color:#E8D080;}
 .mc-badge.soon{background:#F3F3F3;color:#999;border-color:#DDD;}
 .mc-icon{font-size:33px;margin-bottom:7px;display:block;color:var(--green);}
-.mc-icon svg{width:30px;height:30px;}
+.mc-icon svg{width:30px;height:30px;animation:iconFloat 3s ease-in-out infinite;}
+.mc:nth-child(2n) .mc-icon svg{animation-delay:.4s;}
+.mc:nth-child(3n) .mc-icon svg{animation-delay:.8s;}
+.mc:nth-child(4n) .mc-icon svg{animation-delay:1.2s;}
+.mc:hover .mc-icon svg{animation:iconPulse .5s ease-in-out;}
+@keyframes iconFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+@keyframes iconPulse{0%,100%{transform:scale(1) rotate(0);}50%{transform:scale(1.18) rotate(-6deg);}}
+
+.fw-layer{position:fixed;inset:0;pointer-events:none;z-index:9999;}
+.fw-particle{position:absolute;width:7px;height:7px;border-radius:50%;
+  animation:fwBurst .9s ease-out forwards;}
+@keyframes fwBurst{
+  0%{transform:translate(0,0) scale(1);opacity:1;}
+  100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0;}
+}
 .mc-title{font-size:14px;font-weight:900;color:var(--green);margin-bottom:4px;}
 .mc-desc{font-size:10px;color:var(--green3);line-height:1.6;}
 
@@ -880,6 +894,26 @@ const DIFF_PTS={easy:10,medium:20,hard:30};
 const LEVEL_LABEL={easy:'مبتدئ',medium:'وسط',hard:'صعب'};
 const PRAISE=["رائع!","ممتاز!","أحسنت!","عمل رائع!","استمر!","بارع!","مذهل!","جميل جداً!","أصبت!","دقيق!","تألقت!","لا يُشق لك غبار!"];
 function praise(){return PRAISE[Math.floor(Math.random()*PRAISE.length)];}
+const FW_COLORS=['#FFD54F','#FF7043','#66BB6A','#42A5F5','#EC407A','#AB47BC','#FFCA28'];
+function fireworks(){
+  const layer=document.createElement('div');layer.className='fw-layer';
+  const cx=window.innerWidth/2,cy=window.innerHeight/2.6;
+  for(let burst=0;burst<3;burst++){
+    const bx=cx+(Math.random()-.5)*180,by=cy+(Math.random()-.5)*100;
+    for(let i=0;i<14;i++){
+      const p=document.createElement('span');p.className='fw-particle';
+      const ang=(Math.PI*2*i)/14+Math.random()*.3,dist=40+Math.random()*60;
+      p.style.setProperty('--dx',Math.cos(ang)*dist+'px');
+      p.style.setProperty('--dy',Math.sin(ang)*dist+'px');
+      p.style.left=bx+'px';p.style.top=by+'px';
+      p.style.background=FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)];
+      p.style.animationDelay=(burst*120)+'ms';
+      layer.appendChild(p);
+    }
+  }
+  document.body.appendChild(layer);
+  setTimeout(()=>layer.remove(),1500);
+}
 function levelBadge(level){const lbl=LEVEL_LABEL[level];return lbl?`<span class="lvl-badge lvl-${level}">${lbl}</span>`:'';}
 function icon(key,size){size=size||20;return '<span class="icn" style="display:inline-flex;width:'+size+'px;height:'+size+'px;vertical-align:middle">'+(ICONS[key]||ICONS.qmark)+'</span>';}
 function flagIcon(key,w,h){w=w||26;h=h||18;return '<span class="icn-flag" style="display:inline-flex;width:'+w+'px;height:'+h+'px;vertical-align:middle;border-radius:2px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.1)">'+(FLAGS[key]||'')+'</span>';}
@@ -1546,7 +1580,7 @@ function ansJ(ok,btn,ci,opts,ff,lvl){
   document.querySelectorAll('#j-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===opts[ci])b.classList.add('correct');});
   const fb=$('j-fb');const pts=DIFF_PTS[lvl]||30;
   if(ok){btn.classList.add('correct');jPts+=pts;$('j-pts').textContent=jPts;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);fireworks();}
   else{btn.classList.add('wrong');
     fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>💡 ${ff}`;toast('❌ حاول في التالية!');}
   $('j-next').style.display='block';jI++;
@@ -1587,7 +1621,7 @@ function checkC(){
   const ok=cCur.map(x=>x.l).join('')===ans.join('');
   document.querySelectorAll('.tile').forEach(t=>t.classList.add(ok?'t-ok':'t-err'));
   if(ok){const full=DIFF_PTS[cPzl[cIc].level]||25;const pts=hInt?Math.round(full/2):full;cPtsc+=pts;$('c-pts').textContent=cPtsc;
-    $('c-msg').textContent=`🎉 ${praise()} +${pts} نقطة`;toast(`👑 +${pts} نقطة`);}
+    $('c-msg').textContent=`🎉 ${praise()} +${pts} نقطة`;toast(`👑 +${pts} نقطة`);fireworks();}
   else{$('c-msg').textContent=`❌ الإجابة: ${ans.join('')}`;toast('❌ اللغز التالي!');}
   $('c-next').style.display='block';cIc++;
   if(cIc>=cPzl.length)$('c-next').textContent='النتيجة 🏆';
@@ -1626,7 +1660,7 @@ function ansM(ok,btn,correct,lvl){
   document.querySelectorAll('#m-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
   const fb=$('m-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.classList.add('correct');mPtsm+=pts;$('m-pts').textContent=mPtsm;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ ${praise()} 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ ${praise()} 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);fireworks();}
   else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: 🌍 <b>${correct}</b>`;toast('❌ حاول في التالية!');}
   $('m-next').style.display='block';mIm++;
   if(mIm>=mD.length)$('m-next').textContent='النتيجة 🏆';
@@ -1652,7 +1686,7 @@ function selMt(el){
   const a=mtSel,b=el;a.classList.remove('sel');mtSel=null;
   if(a.dataset.v===b.dataset.v){
     a.classList.add('matched');b.classList.add('matched');mtMatched++;
-    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ ${praise()} +${mtAdd}`);
+    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ ${praise()} +${mtAdd}`);fireworks();
     if(mtMatched>=mtPairs.length){mtR++;setTimeout(()=>{
       if(mtR>=MT_ROUNDS.length){showResult(mtPts,'mt',[`🔗 أكملت <b>${MT_ROUNDS.length} جولات</b>`,`🏅 نقاطك: <b>${mtPts}</b>`]);}
       else{$('mt-next').style.display='block';}
@@ -1683,7 +1717,7 @@ function ansB(ok,btn,ci,opts,explain,origQ,lvl){
   $('b-qt').innerHTML=origQ.replace('___',`<span class="blank filled">${opts[ci]}</span>`);
   const fb=$('b-fb');const pts=DIFF_PTS[lvl]||25;
   if(ok){btn.classList.add('correct');bPtsb+=pts;$('b-pts').textContent=bPtsb;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
   else{btn.classList.add('wrong');
     fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>${explain}`;toast('❌ حاول في التالية!');}
   $('b-next').style.display='block';bI++;
@@ -2238,7 +2272,7 @@ function ansK(ok,btn,ci,opts,e,lvl){
   const fb=$('k-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.style.background='#E8F5EC';btn.style.borderColor='#2E7D32';btn.style.color='#1B5E20';
     kPtsk+=pts;$('k-pts').textContent=kPtsk;
-    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>${praise()} +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');}
+    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>${praise()} +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');fireworks();}
   else{btn.style.background='#FFEBEE';btn.style.borderColor='#C62828';btn.style.color='#B71C1C';
     fb.className='fb2 err show';fb.innerHTML=`💪 الصحيح: <b>${opts[ci]}</b><br>✨ ${e}`;toast('💪 حاول في السؤال التالي!');}
   $('k-next').style.display='block';kI++;
@@ -2315,7 +2349,7 @@ function loadMn(){
       const fb=$('mn-fb');
       const mnAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');mnPts+=mnAdd;$('mn-pts').textContent=mnPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);fireworks();}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📖 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('mn-next').style.display='block';mnI++;
@@ -2382,7 +2416,7 @@ function loadCv(){
       const fb=$('cv-fb');
       const cvAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');cvPts+=cvAdd;$('cv-pts').textContent=cvPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);fireworks();}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🖼️ ${q.explain}`;toast('❌ حاول في التالية!');}
       $('cv-next').style.display='block';cvI++;
@@ -2463,7 +2497,7 @@ function clickWord(idx){
     $('ht-correction').innerHTML=`<b>📝 التصحيح:</b><br>${q.explanation}`;
     $('ht-next').style.display='block';htI++;
     if(htI>=htQs.length)$('ht-next').textContent='النتيجة 🏆';
-    toast('🎯 أصبت الخطأ! +30 نقطة');
+    toast('🎯 أصبت الخطأ! +30 نقطة');fireworks();
   } else {
     span.classList.add('selected-wrong');
     toast('❌ هذه ليست الكلمة الخاطئة — حاول مجدداً');
@@ -2511,7 +2545,7 @@ function loadR(){
       document.querySelectorAll('#ro-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('ro-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');roPts+=pts;$('ro-pts').textContent=roPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🌱 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('ro-next').style.display='block';roI++;
@@ -2557,7 +2591,7 @@ function loadCj(){
       document.querySelectorAll('#cj-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('cj-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');cjPts+=pts;$('cj-pts').textContent=cjPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
       else{btn.classList.add('wrong');
         fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🔄 ${q.explain}`;toast('❌ حاول في التالية!');}
       $('cj-next').style.display='block';cjI++;
