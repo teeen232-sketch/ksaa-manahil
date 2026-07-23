@@ -1565,7 +1565,10 @@ function loadC(){
   $('c-next').style.display='none';
   const tw=$('c-tiles');tw.innerHTML='';
   [...p.answer].forEach((_,i)=>{const t=document.createElement('div');t.className='tile';t.id=`ct${i}`;tw.appendChild(t);});
-  const pool=shuf([...p.answer,...(p.ext||[]).join('').slice(0,6)]).slice(0,Math.max(8,p.answer.length+3));
+  const need=[...p.answer];
+  const extraCount=Math.max(0,Math.max(8,p.answer.length+3)-need.length);
+  const extras=shuf((p.ext||[]).join('').split('')).slice(0,extraCount);
+  const pool=shuf([...need,...extras]);
   $('c-pool').innerHTML='';
   pool.forEach((l,i)=>{
     const b=document.createElement('button');b.className='lbtn';b.id=`lb${i}`;b.textContent=l;
