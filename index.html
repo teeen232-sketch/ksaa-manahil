@@ -162,8 +162,20 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .hs-div{width:1px;background:var(--border);align-self:stretch;}
 
 .modes-wrap{width:100%;max-width:820px;padding:14px 20px 22px;}
-.modes-lbl{font-size:13px;font-weight:700;color:var(--green);margin-bottom:11px;
-  display:flex;align-items:center;gap:6px;}
+.modes-lbl{font-size:14.5px;font-weight:900;color:var(--green);margin-bottom:16px;
+  display:inline-flex;align-items:center;gap:8px;position:relative;
+  background:linear-gradient(90deg,var(--greenXL),transparent);
+  padding:7px 16px 9px 8px;border-radius:20px;cursor:default;transition:transform .25s;}
+.modes-lbl:hover{transform:translateX(-3px);}
+.modes-lbl::after{content:'';position:absolute;bottom:2px;right:8px;height:3px;width:34px;
+  background:linear-gradient(90deg,var(--green),var(--green3));border-radius:3px;
+  animation:lblBar 1.8s ease-in-out infinite;}
+.modes-lbl .lbl-ico{display:inline-flex;font-size:19px;transform-origin:60% 60%;
+  animation:lblWiggle 2.4s ease-in-out infinite;}
+.modes-lbl:hover .lbl-ico{animation:lblSpin .6s ease-in-out;}
+@keyframes lblBar{0%,100%{width:34px;opacity:.55;}50%{width:56px;opacity:1;}}
+@keyframes lblWiggle{0%,8%,100%{transform:rotate(0deg) scale(1);}2%{transform:rotate(-14deg) scale(1.08);}4%{transform:rotate(11deg) scale(1.08);}6%{transform:rotate(-6deg);}}
+@keyframes lblSpin{0%{transform:rotate(0) scale(1);}100%{transform:rotate(360deg) scale(1.25);}}
 .modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .mc{background:#FFF;border:1.5px solid var(--border);border-radius:14px;
   padding:18px 14px 14px;cursor:pointer;transition:all .25s;text-align:center;
@@ -435,7 +447,7 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
     </div>
   </div>
   <div class="modes-wrap">
-    <div class="modes-lbl">🎮 اختر لعبتك</div>
+    <div class="modes-lbl"><span class="lbl-ico">🎮</span> اختر لعبتك</div>
     <div class="modes-grid">
       <div class="mc" onclick="startJourney()">
         <div class="mc-badge" data-icon="fire">الأكثر متعة</div>
