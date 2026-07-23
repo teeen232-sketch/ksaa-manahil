@@ -175,6 +175,10 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .hs .hl{font-size:9px;color:var(--greenL);}
 .hs-div{width:1px;background:var(--border);align-self:stretch;}
 
+.mission-card{width:calc(100% - 40px);max-width:700px;margin:0 auto 18px;padding:20px 26px;
+  background:linear-gradient(135deg,var(--greenXXL),var(--greenXL));
+  border:1px solid var(--border);border-radius:16px;
+  font-size:12.5px;line-height:2;color:var(--green2);text-align:center;}
 .modes-wrap{width:100%;max-width:820px;padding:14px 20px 22px;}
 .modes-lbl{font-size:14.5px;font-weight:900;color:var(--green);margin-bottom:16px;
   display:inline-flex;align-items:center;gap:8px;position:relative;
@@ -239,6 +243,11 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .gstat .gl{font-size:8px;color:rgba(255,255,255,.65);}
 .gstat.hud-life .gv{font-size:13px;letter-spacing:1px;}
 .hud-hearts .dim{opacity:.28;filter:grayscale(1);}
+.gstat.hud-streak-wrap{transition:background .3s,border-color .3s;}
+.gstat.hud-streak-wrap .hud-streak{transition:color .3s;}
+.gstat.hud-streak-wrap.lit{background:rgba(255,193,7,.22);border-color:rgba(255,193,7,.5);}
+.gstat.hud-streak-wrap.lit .hud-streak{color:#FFC107;animation:streakPop .35s ease;}
+@keyframes streakPop{0%{transform:scale(1);}50%{transform:scale(1.25);}100%{transform:scale(1);}}
 .screen.hit-shake{animation:shk .4s;}
 .gbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#FFF;
   border-radius:8px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:var(--font);transition:all .2s;}
@@ -467,6 +476,9 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
       <div class="hs-div"></div>
       <div class="hs"><div class="hv">20</div><div class="hl">إصدارات</div></div>
     </div>
+  </div>
+  <div class="mission-card">
+    "حين تلتقي متعة اللعب بعمق المعرفة، تصير اللغة العربية رحلة نخوضها لا درساً نحفظه" — من هذا المبدأ صمّم مجمع الملك سلمان العالمي للغة العربية منصة مناهل، لتتحوّل إصداراته العلمية إلى تحديات شائقة، ونقاطها إلى إنجاز، وتعلّمها إلى متعة متجددة.
   </div>
   <div class="modes-wrap">
     <div class="modes-lbl"><span class="lbl-ico">🎮</span> اختر لعبتك</div>
@@ -957,6 +969,10 @@ function resetHUD(){hudLives=3;hudStreak=0;renderHUD();}
 function renderHUD(){
   document.querySelectorAll('.hud-hearts').forEach(el=>{
     el.innerHTML='❤️'.repeat(hudLives)+Array(3-hudLives).fill('<span class="dim">❤️</span>').join('');
+  });
+  document.querySelectorAll('.hud-streak-wrap').forEach(el=>{
+    el.classList.toggle('lit',hudStreak>=2);
+    el.querySelector('.hud-streak').textContent=hudStreak>=2?`🔥×${hudStreak}`:'—';
   });
 }
 function hudCorrect(){
@@ -2731,7 +2747,7 @@ document.querySelectorAll('[data-icon]').forEach(el=>{
 
 /* ── حقن عنصر القلوب في ترويسة كل شاشة لعبة ── */
 document.querySelectorAll('.ghdr-stats').forEach(el=>{
-  el.insertAdjacentHTML('beforeend','<div class="gstat hud-life"><div class="gv hud-hearts">❤️❤️❤️</div><div class="gl">حياة</div></div>');
+  el.insertAdjacentHTML('beforeend','<div class="gstat hud-life"><div class="gv hud-hearts">❤️❤️❤️</div><div class="gl">حياة</div></div><div class="gstat hud-streak-wrap"><div class="gv hud-streak">—</div><div class="gl">السلسلة</div></div>');
 });
 
 /* ── تفاعل ثلاثي الأبعاد (إمالة تتبع المؤشر) ── */
