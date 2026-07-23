@@ -1578,7 +1578,7 @@ function loadJ(){
   $('j-next').style.display='none';$('j-fb').classList.remove('show','ok','err');
   $('flip3d').classList.remove('flipped');
   $('ff').innerHTML=`<div class="book-art" style="background:${b.color}"><span style="position:relative;z-index:1">${b.icon.startsWith("flag-")?flagIcon(b.icon.slice(5),44,30):icon(b.icon,34)}</span></div>
-    <div class="bi"><div class="stag">${b.series}</div><h3>${b.title}</h3><p>${b.summary.slice(0,90)}...</p><div class="flip-hint">👆 انقر للتفاصيل</div></div>`;
+    <div class="bi"><h3>${b.title}</h3><p>${b.summary.slice(0,90)}...</p><div class="flip-hint">👆 انقر للتفاصيل</div></div>`;
   $('fb_b').innerHTML=`<h4>📖 نبذة عن الكتاب</h4><p>${b.summary}</p><div class="fact-box">💡 <b>هل تعلم:</b> ${b.fact}</div>`;
   $('j-qt').innerHTML=`${levelBadge(b.level)}<b style="color:var(--green2)">❓</b> ${b.q}`;
   const og=$('j-opts');og.innerHTML='';
