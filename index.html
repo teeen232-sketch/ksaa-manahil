@@ -1508,6 +1508,7 @@ const $=id=>document.getElementById(id);
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 function goHome(){show('s-intro');}
 function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function byLevel(a){const g={easy:[],medium:[],hard:[]};a.forEach(q=>{(g[q.level]||g.medium).push(q);});return [...shuf(g.easy),...shuf(g.medium),...shuf(g.hard)];}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function showResult(pts,mode,facts){
   const s=pts>=150?'⭐⭐⭐':pts>=80?'⭐⭐':'⭐';
@@ -1522,7 +1523,7 @@ function showResult(pts,mode,facts){
 
 /* ════════ JOURNEY ════════ */
 let jBks,jI,jPts,jAns;
-function startJourney(){jBks=shuf([...JBOOKS]);jI=0;jPts=0;loadJ();show('s-journey');}
+function startJourney(){jBks=byLevel(JBOOKS);jI=0;jPts=0;loadJ();show('s-journey');}
 function loadJ(){
   jAns=false;const b=jBks[jI];
   $('j-q').textContent=`${jI+1}/${jBks.length}`;$('j-pts').textContent=jPts;
@@ -1555,7 +1556,7 @@ function nextJ(){if(jI>=jBks.length){showResult(jPts,'j',[`🗺️ رحلت عب
 
 /* ════════ CROWN ════════ */
 let cPzl,cIc,cPtsc,cCur,hInt;
-function startCrown(){cPzl=shuf([...CROWN_P]);cIc=0;cPtsc=0;loadC();show('s-crown');}
+function startCrown(){cPzl=byLevel(CROWN_P);cIc=0;cPtsc=0;loadC();show('s-crown');}
 function loadC(){
   const p=cPzl[cIc];cCur=[];hInt=false;
   $('c-q').textContent=`${cIc+1}/${cPzl.length}`;$('c-pts').textContent=cPtsc;
@@ -1602,13 +1603,13 @@ function nextC(){if(cIc>=cPzl.length){showResult(cPtsc,'c',[`👑 حللت <b>${
 
 /* ════════ MAP ════════ */
 let mD,mIm,mPtsm,mAnsm;
-function startMap(){mD=shuf([...MAP_D]);mIm=0;mPtsm=0;loadM();show('s-map');}
+function startMap(){mD=byLevel(MAP_D);mIm=0;mPtsm=0;loadM();show('s-map');}
 function loadM(){
   mAnsm=false;const c=mD[mIm];
   $('m-q').textContent=`${mIm+1}/${mD.length}`;$('m-pts').textContent=mPtsm;
   $('m-prog').style.width=`${(mIm/mD.length)*100}%`;
   $('m-next').style.display='none';$('m-fb').classList.remove('show','ok','err');
-  $('m-fl').innerHTML=flagIcon(c.f,52,36);$('m-sub').innerHTML=`${levelBadge(c.level)}${c.s}`;
+  $('m-fl').innerHTML=icon('qmark',44);$('m-sub').innerHTML=`${levelBadge(c.level)}${c.s}`;
   $('m-facts').innerHTML=c.facts.map(f=>`<div class="fact-row"><span class="fi">${icon(f.i,16)}</span>${f.t}</div>`).join('');
   const og=$('m-opts');og.innerHTML='';
   shuf([...c.opts]).forEach(o=>{
@@ -1658,7 +1659,7 @@ function nextMt(){loadMt();}
 
 /* ════════ BLANK ════════ */
 let bQs,bI,bPtsb,bAnsb;
-function startBlank(){bQs=shuf([...BQ]);bI=0;bPtsb=0;loadB();show('s-blank');}
+function startBlank(){bQs=byLevel(BQ);bI=0;bPtsb=0;loadB();show('s-blank');}
 function loadB(){
   bAnsb=false;const q=bQs[bI];
   $('b-q').textContent=`${bI+1}/${bQs.length}`;$('b-pts').textContent=bPtsb;
@@ -2208,7 +2209,7 @@ const KIDS_Q = [
 ];
 
 let kQs,kI,kPtsk,kAnsk;
-function startKids(){kQs=shuf([...KIDS_Q]);kI=0;kPtsk=0;loadK();show('s-kids');}
+function startKids(){kQs=byLevel(KIDS_Q);kI=0;kPtsk=0;loadK();show('s-kids');}
 function loadK(){
   kAnsk=false;const q=kQs[kI];
   $('k-q').textContent=`${kI+1}/${kQs.length}`;$('k-pts').textContent=kPtsk;
@@ -2292,7 +2293,7 @@ const MN_Q = [
 ];
 
 let mnQs,mnI,mnPts,mnAns;
-function startMeaning(){mnQs=shuf([...MN_Q]);mnI=0;mnPts=0;loadMn();show('s-meaning');}
+function startMeaning(){mnQs=byLevel(MN_Q);mnI=0;mnPts=0;loadMn();show('s-meaning');}
 function loadMn(){
   mnAns=false;const q=mnQs[mnI];
   $('mn-q').textContent=`${mnI+1}/${mnQs.length}`;$('mn-pts').textContent=mnPts;
@@ -2355,7 +2356,7 @@ const CV_Q = [
 ];
 
 let cvQs,cvI,cvPts,cvAns;
-function startCover(){cvQs=shuf([...CV_Q]);cvI=0;cvPts=0;loadCv();show('s-cover');}
+function startCover(){cvQs=byLevel(CV_Q);cvI=0;cvPts=0;loadCv();show('s-cover');}
 function loadCv(){
   cvAns=false;const q=cvQs[cvI];
   $('cv-q').textContent=`${cvI+1}/${cvQs.length}`;$('cv-pts').textContent=cvPts;
@@ -2427,7 +2428,7 @@ const HT_Q = [
 ];
 
 let htQs,htI,htPts,htAns,htAnswered;
-function startHunter(){htQs=shuf([...HT_Q]);htI=0;htPts=0;loadHt();show('s-hunter');}
+function startHunter(){htQs=byLevel(HT_Q);htI=0;htPts=0;loadHt();show('s-hunter');}
 function loadHt(){
   htAns=false;htAnswered=false;
   const q=htQs[htI];
@@ -2491,7 +2492,7 @@ const ROOT_Q=[
   {word:"تساءل",opts:["سأل","ساءل","تسل","سلأ"],ok:0,level:"hard",explain:"جذر 'تساءل' هو 'سأل' — الهمزة أصلية، والتاء زائدة في أول الفعل (تفاعل)."},
 ];
 let roQs,roI,roPts,roAns;
-function startRoot(){roQs=shuf([...ROOT_Q]);roI=0;roPts=0;loadR();show('s-root');}
+function startRoot(){roQs=byLevel(ROOT_Q);roI=0;roPts=0;loadR();show('s-root');}
 function loadR(){
   roAns=false;const q=roQs[roI];
   $('ro-q').textContent=`${roI+1}/${roQs.length}`;$('ro-pts').textContent=roPts;
@@ -2537,7 +2538,7 @@ const CONJ_Q=[
   {q:"صرّف الفعل الأجوف 'باع' مع الضمير 'هنّ' في الماضي:",opts:["بعن","باعن","بعنّ","بايعن"],ok:0,level:"hard",explain:"الفعل الأجوف 'باع' مع نون النسوة تُحذف حرف العلة: بِعْنَ."},
 ];
 let cjQs,cjI,cjPts,cjAns;
-function startConj(){cjQs=shuf([...CONJ_Q]);cjI=0;cjPts=0;loadCj();show('s-conj');}
+function startConj(){cjQs=byLevel(CONJ_Q);cjI=0;cjPts=0;loadCj();show('s-conj');}
 function loadCj(){
   cjAns=false;const q=cjQs[cjI];
   $('cj-q').textContent=`${cjI+1}/${cjQs.length}`;$('cj-pts').textContent=cjPts;
