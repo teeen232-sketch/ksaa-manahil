@@ -408,7 +408,6 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
       <div class="fb cg" onclick="openCatPanel('الدراسات')" title="الدراسات"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span class="fl">الدراسات</span></div>
       <div class="fb c2" onclick="openCatPanel('المعاجم')" title="المعاجم"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5v-18z"/><path d="M9 2v8l3-2 3 2V2"/></svg></span><span class="fl">المعاجم</span></div>
       <div class="fb cg2" onclick="openCatPanel('التحقيق والدراسات التراثية')" title="التحقيق والدراسات التراثية"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8a2 2 0 0 0 2-2V5a2 2 0 0 1 2-2"/><path d="M8 21a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/></svg></span><span class="fl">التحقيق<br>والدراسات التراثية</span></div>
-      <div class="fb c4" onclick="openCatPanel('الحقائب التدريبية')" title="الحقائب التدريبية"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/></svg></span><span class="fl">الحقائب<br>التدريبية</span></div>
     </div>
     <div class="hero-badge">📚 لعبة لغوية مستوحاة من إصدارات المجمع الحقيقية</div>
     <div class="hero-title">مناهل من إصدارات المجمع</div>
@@ -2208,43 +2207,6 @@ const CATS = {
       {t:"الديوان: ديوان أبي الطيب المتنبي وأخباره",s:"التحقيق والدراسات التراثية 1",url:"https://library.ksaa.gov.sa/index"},
       {t:"شرح ديوان المتنبّي للإمام عبد القاهر بن عبد الرّحمن الجُرجاني / جزان",s:"التحقيق والدراسات التراثية 2",url:"https://library.ksaa.gov.sa/index"},
       {t:"التحقيق والدراسات التراثية  2026",s:"التحقيق والدراسات التراثية",url:"https://library.ksaa.gov.sa/index"},
-    ]
-  },
-  "الحقائب التدريبية": {
-    icon:"briefcase", color:"#22743C",
-    url:"https://library.ksaa.gov.sa/index",
-    desc:"حقائب تدريبية لتعليم اللغة العربية وتطوير مهارات معلميها",
-    books:[
-      {t:"الحقائب التدريبية",s:"الحقائب التدريبية",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات الكتابة الإدارية",s:"الحقائب التدريبية 1",url:"https://library.ksaa.gov.sa/index"},
-      {t:"المهارات الرئيسة في الكتابة باللغة العربية",s:"الحقائب التدريبية 2",url:"https://library.ksaa.gov.sa/index"},
-      {t:"الإدارة اللغوية لحسابات وسائل التواصل",s:"الحقائب التدريبية 3",url:"https://library.ksaa.gov.sa/index"},
-      {t:"قيادة صفوف تعليم اللغة العربية لغة ثانية: برنامج تدريبي لمعلمي اللغة العربية لغة ثانية",s:"الحقائب التدريبية 4",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات التخاطب والحوار الرياضين",s:"الحقائب التدريبية 5",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة المهارات اللغوية للصياغة القانونية",s:"الحقائب التدريبية 6",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة مقدمة التحرير والتدقيق اللغوي",s:"الحقائب التدريبية 7",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة تدريبات المهارات الإملائية",s:"الحقائب التدريبية 8",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة تدريبات المهارات النحوية",s:"الحقائب التدريبية 9",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة البرامج التطبيقية الرقمية في التدقيق اللغوي",s:"الحقائب التدريبية 10",url:"https://library.ksaa.gov.sa/index"},
-      {t:"دليل المدرب المهارات اللغوية للصياغة القانونية",s:"الحقائب التدريبية 11",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة مهارات اللغة لصناعة المحتوى",s:"الحقائب التدريبية 12",url:"https://library.ksaa.gov.sa/index"},
-      {t:"دليل المدرب حقيبة مهارات اللغة لصناعة المحتوى",s:"الحقائب التدريبية 13",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة مهارات الاختزال اللغوي",s:"الحقائب التدريبية 14",url:"https://library.ksaa.gov.sa/index"},
-      {t:"دليل المدرب مهارات الاختزال اللغوي",s:"الحقائب التدريبية 15",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة مهارات البحث العلمي اللغوي",s:"الحقائب التدريبية 16",url:"https://library.ksaa.gov.sa/index"},
-      {t:"دليل المدرب مهارات البحث العلمي اللغوي",s:"الحقائب التدريبية 17",url:"https://library.ksaa.gov.sa/index"},
-      {t:"حقيبة مهارات الترجمة العربية لأغراض دبلوماسية",s:"الحقائب التدريبية 18",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات الترجمة التحريرية من اللغة العربية وإليها",s:"الحقائب التدريبية 19",url:"https://library.ksaa.gov.sa/index"},
-      {t:"لم يسكن",s:"الحقائب التدريبية 20",url:"https://library.ksaa.gov.sa/index"},
-      {t:"لم يسكن",s:"الحقائب التدريبية 21",url:"https://library.ksaa.gov.sa/index"},
-      {t:"لم يسكن",s:"الحقائب التدريبية 22",url:"https://library.ksaa.gov.sa/index"},
-      {t:"المهارات الأسلوبية.",s:"الحقائب التدريبية 23",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات التدقيق اللغوي.",s:"الحقائب التدريبية 24",url:"https://library.ksaa.gov.sa/index"},
-      {t:"المسائل الصرفية الشائعة.",s:"الحقائب التدريبية 25",url:"https://library.ksaa.gov.sa/index"},
-      {t:"الكتابة الإدارية والأخطاء اللغوية الشائعة.",s:"الحقائب التدريبية 26",url:"https://library.ksaa.gov.sa/index"},
-      {t:"بنك الأسئلة لمقررات برنامج دبلوم التصحيح اللغوي.",s:"الحقائب التدريبية 27",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات التخاطب العامة",s:"الحقائب التدريبية 28",url:"https://library.ksaa.gov.sa/index"},
-      {t:"مهارات الترجمة العربية في المنظمات الدولية",s:"الحقائب التدريبية 29",url:"https://library.ksaa.gov.sa/index"},
     ]
   },
 };;;
