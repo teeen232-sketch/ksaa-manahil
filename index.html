@@ -1596,7 +1596,8 @@ function clearCrown(){
 function crownHint(){
   if(hInt){toast('💡 استخدمت التلميح بالفعل!');return;}hInt=true;
   const next=cCur.length;const letter=[...cPzl[cIc].answer][next];
-  document.querySelectorAll('.lbtn').forEach(b=>{if(!b.disabled&&b.textContent===letter){b.click();}});
+  const btn=[...document.querySelectorAll('.lbtn')].find(b=>!b.disabled&&b.textContent===letter);
+  if(btn)btn.click();
   toast(`💡 الحرف التالي: "${letter}"`);
 }
 function nextC(){if(cIc>=cPzl.length){showResult(cPtsc,'c',[`👑 حللت <b>${cPzl.length} ألغاز</b> من عناوين المجمع`,`💡 نقاطك: <b>${cPtsc}</b> من أصل ${cPzl.length*25}`]);return;}loadC();}
