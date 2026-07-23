@@ -160,9 +160,11 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--greenXL);
   border:1px solid var(--border);border-radius:20px;padding:5px 16px;
   font-size:11.5px;color:var(--green);font-weight:700;margin-bottom:12px;
-  cursor:pointer;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;}
-.hero-badge.tilt-active{transition:transform .06s linear,box-shadow .2s;}
+  cursor:pointer;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  animation:badgePulse 2.4s ease-in-out infinite;}
+.hero-badge.tilt-active{transition:transform .06s linear,box-shadow .2s;animation-play-state:paused;}
 .hero-badge:hover{box-shadow:0 8px 20px rgba(10,61,30,.22);}
+@keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
 .hero-title{font-size:34px;font-weight:900;color:var(--green);margin-bottom:6px;
   display:inline-block;cursor:pointer;transform-style:preserve-3d;
   transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
@@ -447,8 +449,8 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
       <div class="fb c2" onclick="openCatPanel('المعاجم')" title="المعاجم"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5v-18z"/><path d="M9 2v8l3-2 3 2V2"/></svg></span><span class="fl">المعاجم</span></div>
       <div class="fb cg2" onclick="openCatPanel('التحقيق والدراسات التراثية')" title="التحقيق والدراسات التراثية"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8a2 2 0 0 0 2-2V5a2 2 0 0 1 2-2"/><path d="M8 21a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/></svg></span><span class="fl">التحقيق<br>والدراسات التراثية</span></div>
     </div>
-    <div class="hero-badge">📚 لعبة لغوية مستوحاة من إصدارات المجمع</div>
     <div class="hero-title">مناهل من إصدارات المجمع</div>
+    <div class="hero-badge">📚 لعبة لغوية مستوحاة من إصدارات المجمع</div>
     <div class="hero-sub">اكتشف كتب المجمع وتعلّم من مناهلها العلمية اللغوية</div>
     <div class="hero-stats">
       <div class="hs"><div class="hv">12</div><div class="hl">لعبة</div></div>
