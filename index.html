@@ -175,6 +175,10 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .hs .hl{font-size:9px;color:var(--greenL);}
 .hs-div{width:1px;background:var(--border);align-self:stretch;}
 
+.mission-card{width:calc(100% - 40px);max-width:700px;margin:0 auto 18px;padding:20px 26px;
+  background:linear-gradient(135deg,var(--greenXXL),var(--greenXL));
+  border:1px solid var(--border);border-radius:16px;
+  font-size:12.5px;line-height:2;color:var(--green2);text-align:center;}
 .modes-wrap{width:100%;max-width:820px;padding:14px 20px 22px;}
 .modes-lbl{font-size:14.5px;font-weight:900;color:var(--green);margin-bottom:16px;
   display:inline-flex;align-items:center;gap:8px;position:relative;
@@ -199,9 +203,14 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
 .mc:hover{border-color:var(--green3);transform:translateY(-3px);box-shadow:0 8px 28px rgba(10,61,30,.13);}
 .mc:hover::after{transform:scaleX(1);}
 .mc-badge{position:absolute;top:8px;left:8px;background:var(--greenXL);color:var(--green);
-  border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-size:8.5px;font-weight:700;}
-.mc-badge.new{background:#FFF8E1;color:#7A5C00;border-color:#E8D080;}
+  border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-size:8.5px;font-weight:700;
+  overflow:hidden;}
+.mc-badge.new{background:#FFF8E1;color:#7A5C00;border-color:#E8D080;position:absolute;}
+.mc-badge.new::after{content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.85),transparent);
+  animation:badgeShine 3.2s ease-in-out infinite;}
 .mc-badge.soon{background:#F3F3F3;color:#999;border-color:#DDD;}
+@keyframes badgeShine{0%{left:-60%;}35%,100%{left:130%;}}
 .mc-icon{font-size:33px;margin-bottom:7px;display:block;color:var(--green);}
 .mc-icon svg{width:30px;height:30px;animation:iconFloat 3s ease-in-out infinite;}
 .mc:nth-child(2n) .mc-icon svg{animation-delay:.4s;}
@@ -232,6 +241,14 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
   border-radius:9px;padding:4px 12px;text-align:center;}
 .gstat .gv{font-size:15px;font-weight:900;color:#FFF;line-height:1;}
 .gstat .gl{font-size:8px;color:rgba(255,255,255,.65);}
+.gstat.hud-life .gv{font-size:13px;letter-spacing:1px;}
+.hud-hearts .dim{opacity:.28;filter:grayscale(1);}
+.gstat.hud-streak-wrap{transition:background .3s,border-color .3s;}
+.gstat.hud-streak-wrap .hud-streak{transition:color .3s;}
+.gstat.hud-streak-wrap.lit{background:rgba(255,193,7,.22);border-color:rgba(255,193,7,.5);}
+.gstat.hud-streak-wrap.lit .hud-streak{color:#FFC107;animation:streakPop .35s ease;}
+@keyframes streakPop{0%{transform:scale(1);}50%{transform:scale(1.25);}100%{transform:scale(1);}}
+.screen.hit-shake{animation:shk .4s;}
 .gbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#FFF;
   border-radius:8px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:var(--font);transition:all .2s;}
 .gbtn:hover{background:rgba(255,255,255,.25);}
@@ -459,6 +476,9 @@ html,body{height:100%;font-family:var(--font);background:#FFFFFF;color:var(--gre
       <div class="hs-div"></div>
       <div class="hs"><div class="hv">20</div><div class="hl">إصدارات</div></div>
     </div>
+  </div>
+  <div class="mission-card">
+    "حين تلتقي متعة اللعب بعمق المعرفة، تصير اللغة العربية رحلة نخوضها لا درساً نحفظه" — من هذا المبدأ صمّم مجمع الملك سلمان العالمي للغة العربية منصة مناهل، لتتحوّل إصداراته العلمية إلى تحديات شائقة، ونقاطها إلى إنجاز، وتعلّمها إلى متعة متجددة.
   </div>
   <div class="modes-wrap">
     <div class="modes-lbl"><span class="lbl-ico">🎮</span> اختر لعبتك</div>
@@ -942,6 +962,28 @@ function fireworks(){
   setTimeout(()=>layer.remove(),1500);
 }
 function levelBadge(level){const lbl=LEVEL_LABEL[level];return lbl?`<span class="lvl-badge lvl-${level}">${lbl}</span>`:'';}
+
+/* ── نظام القلوب والتتابع (الحياة + الستريك) ── */
+let hudLives=3,hudStreak=0;
+function resetHUD(){hudLives=3;hudStreak=0;renderHUD();}
+function renderHUD(){
+  document.querySelectorAll('.hud-hearts').forEach(el=>{
+    el.innerHTML='❤️'.repeat(hudLives)+Array(3-hudLives).fill('<span class="dim">❤️</span>').join('');
+  });
+  document.querySelectorAll('.hud-streak-wrap').forEach(el=>{
+    el.classList.toggle('lit',hudStreak>=2);
+    el.querySelector('.hud-streak').textContent=hudStreak>=2?`🔥×${hudStreak}`:'—';
+  });
+}
+function hudCorrect(){
+  hudStreak++;renderHUD();
+  if(hudStreak>=3 && hudStreak%3===0)toast(`🔥 ${hudStreak} إجابات متتالية!`);
+}
+function hudWrong(){
+  hudLives=Math.max(0,hudLives-1);hudStreak=0;renderHUD();
+  const scr=document.querySelector('.screen.active');
+  if(scr){scr.classList.remove('hit-shake');void scr.offsetWidth;scr.classList.add('hit-shake');}
+}
 function icon(key,size){size=size||20;return '<span class="icn" style="display:inline-flex;width:'+size+'px;height:'+size+'px;vertical-align:middle">'+(ICONS[key]||ICONS.qmark)+'</span>';}
 function flagIcon(key,w,h){w=w||26;h=h||18;return '<span class="icn-flag" style="display:inline-flex;width:'+w+'px;height:'+h+'px;vertical-align:middle;border-radius:2px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.1)">'+(FLAGS[key]||'')+'</span>';}
 
@@ -1584,7 +1626,7 @@ function showResult(pts,mode,facts){
 
 /* ════════ JOURNEY ════════ */
 let jBks,jI,jPts,jAns;
-function startJourney(){jBks=byLevel(JBOOKS);jI=0;jPts=0;loadJ();show('s-journey');}
+function startJourney(){jBks=byLevel(JBOOKS);jI=0;jPts=0;resetHUD();loadJ();show('s-journey');}
 function loadJ(){
   jAns=false;const b=jBks[jI];
   $('j-q').textContent=`${jI+1}/${jBks.length}`;$('j-pts').textContent=jPts;
@@ -1607,9 +1649,9 @@ function ansJ(ok,btn,ci,opts,ff,lvl){
   document.querySelectorAll('#j-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===opts[ci])b.classList.add('correct');});
   const fb=$('j-fb');const pts=DIFF_PTS[lvl]||30;
   if(ok){btn.classList.add('correct');jPts+=pts;$('j-pts').textContent=jPts;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);fireworks();}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>💡 ${ff}`;toast(`✅ +${pts} نقطة`);fireworks();hudCorrect();}
   else{btn.classList.add('wrong');
-    fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>💡 ${ff}`;toast('❌ حاول في التالية!');}
+    fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>💡 ${ff}`;toast('❌ حاول في التالية!');hudWrong();}
   $('j-next').style.display='block';jI++;
   if(jI>=jBks.length)$('j-next').textContent='النتيجة 🏆';
 }
@@ -1617,7 +1659,7 @@ function nextJ(){if(jI>=jBks.length){showResult(jPts,'j',[`🗺️ رحلت عب
 
 /* ════════ CROWN ════════ */
 let cPzl,cIc,cPtsc,cCur,hInt;
-function startCrown(){cPzl=byLevel(CROWN_P);cIc=0;cPtsc=0;loadC();show('s-crown');}
+function startCrown(){cPzl=byLevel(CROWN_P);cIc=0;cPtsc=0;resetHUD();loadC();show('s-crown');}
 function loadC(){
   const p=cPzl[cIc];cCur=[];hInt=false;
   $('c-q').textContent=`${cIc+1}/${cPzl.length}`;$('c-pts').textContent=cPtsc;
@@ -1648,8 +1690,8 @@ function checkC(){
   const ok=cCur.map(x=>x.l).join('')===ans.join('');
   document.querySelectorAll('.tile').forEach(t=>t.classList.add(ok?'t-ok':'t-err'));
   if(ok){const full=DIFF_PTS[cPzl[cIc].level]||25;const pts=hInt?Math.round(full/2):full;cPtsc+=pts;$('c-pts').textContent=cPtsc;
-    $('c-msg').textContent=`🎉 ${praise()} +${pts} نقطة`;toast(`👑 +${pts} نقطة`);fireworks();}
-  else{$('c-msg').textContent=`❌ الإجابة: ${ans.join('')}`;toast('❌ اللغز التالي!');}
+    $('c-msg').textContent=`🎉 ${praise()} +${pts} نقطة`;toast(`👑 +${pts} نقطة`);fireworks();hudCorrect();}
+  else{$('c-msg').textContent=`❌ الإجابة: ${ans.join('')}`;toast('❌ اللغز التالي!');hudWrong();}
   $('c-next').style.display='block';cIc++;
   if(cIc>=cPzl.length)$('c-next').textContent='النتيجة 🏆';
 }
@@ -1668,7 +1710,7 @@ function nextC(){if(cIc>=cPzl.length){showResult(cPtsc,'c',[`👑 حللت <b>${
 
 /* ════════ MAP ════════ */
 let mD,mIm,mPtsm,mAnsm;
-function startMap(){mD=byLevel(MAP_D);mIm=0;mPtsm=0;loadM();show('s-map');}
+function startMap(){mD=byLevel(MAP_D);mIm=0;mPtsm=0;resetHUD();loadM();show('s-map');}
 function loadM(){
   mAnsm=false;const c=mD[mIm];
   $('m-q').textContent=`${mIm+1}/${mD.length}`;$('m-pts').textContent=mPtsm;
@@ -1687,8 +1729,8 @@ function ansM(ok,btn,correct,lvl){
   document.querySelectorAll('#m-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
   const fb=$('m-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.classList.add('correct');mPtsm+=pts;$('m-pts').textContent=mPtsm;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ ${praise()} 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);fireworks();}
-  else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: 🌍 <b>${correct}</b>`;toast('❌ حاول في التالية!');}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ ${praise()} 🌍 <b>${correct}</b> — +${pts} نقطة`;toast(`🌍 +${pts} نقطة`);fireworks();hudCorrect();}
+  else{fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: 🌍 <b>${correct}</b>`;toast('❌ حاول في التالية!');hudWrong();}
   $('m-next').style.display='block';mIm++;
   if(mIm>=mD.length)$('m-next').textContent='النتيجة 🏆';
 }
@@ -1696,7 +1738,7 @@ function nextM(){if(mIm>=mD.length){showResult(mPtsm,'m',[`🌍 استكشفت <
 
 /* ════════ MATCH ════════ */
 let mtR,mtPairs,mtSel,mtMatched,mtPts,mtLevel;
-function startMatch(){mtR=0;mtPts=0;loadMt();show('s-match');}
+function startMatch(){mtR=0;mtPts=0;resetHUD();loadMt();show('s-match');}
 function loadMt(){
   mtSel=null;mtMatched=0;const mtRound=MT_ROUNDS[mtR%MT_ROUNDS.length];mtPairs=[...mtRound.pairs];mtLevel=mtRound.level;
   $('mt-r').textContent=mtR+1;$('mt-m').textContent=0;$('mt-pts').textContent=mtPts;$('mt-lvl').innerHTML=levelBadge(mtRound.level);
@@ -1713,18 +1755,18 @@ function selMt(el){
   const a=mtSel,b=el;a.classList.remove('sel');mtSel=null;
   if(a.dataset.v===b.dataset.v){
     a.classList.add('matched');b.classList.add('matched');mtMatched++;
-    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ ${praise()} +${mtAdd}`);fireworks();
+    $('mt-m').textContent=mtMatched;const mtAdd=DIFF_PTS[mtLevel]||20;mtPts+=mtAdd;$('mt-pts').textContent=mtPts;toast(`✅ ${praise()} +${mtAdd}`);fireworks();hudCorrect();
     if(mtMatched>=mtPairs.length){mtR++;setTimeout(()=>{
       if(mtR>=MT_ROUNDS.length){showResult(mtPts,'mt',[`🔗 أكملت <b>${MT_ROUNDS.length} جولات</b>`,`🏅 نقاطك: <b>${mtPts}</b>`]);}
       else{$('mt-next').style.display='block';}
     },600);}
-  }else{a.classList.add('flash-err');b.classList.add('flash-err');setTimeout(()=>{a.classList.remove('flash-err');b.classList.remove('flash-err');},400);toast('❌ جرّب مجدداً!');}
+  }else{a.classList.add('flash-err');b.classList.add('flash-err');setTimeout(()=>{a.classList.remove('flash-err');b.classList.remove('flash-err');},400);toast('❌ جرّب مجدداً!');hudWrong();}
 }
 function nextMt(){loadMt();}
 
 /* ════════ BLANK ════════ */
 let bQs,bI,bPtsb,bAnsb;
-function startBlank(){bQs=byLevel(BQ);bI=0;bPtsb=0;loadB();show('s-blank');}
+function startBlank(){bQs=byLevel(BQ);bI=0;bPtsb=0;resetHUD();loadB();show('s-blank');}
 function loadB(){
   bAnsb=false;const q=bQs[bI];
   $('b-q').textContent=`${bI+1}/${bQs.length}`;$('b-pts').textContent=bPtsb;
@@ -1744,9 +1786,9 @@ function ansB(ok,btn,ci,opts,explain,origQ,lvl){
   $('b-qt').innerHTML=origQ.replace('___',`<span class="blank filled">${opts[ci]}</span>`);
   const fb=$('b-fb');const pts=DIFF_PTS[lvl]||25;
   if(ok){btn.classList.add('correct');bPtsb+=pts;$('b-pts').textContent=bPtsb;
-    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
+    fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>${explain}`;toast(`✅ +${pts} نقطة`);fireworks();hudCorrect();}
   else{btn.classList.add('wrong');
-    fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>${explain}`;toast('❌ حاول في التالية!');}
+    fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${opts[ci]}</b><br>${explain}`;toast('❌ حاول في التالية!');hudWrong();}
   $('b-next').style.display='block';bI++;
   if(bI>=bQs.length)$('b-next').textContent='النتيجة 🏆';
 }
@@ -2344,7 +2386,7 @@ const KIDS_Q = [
 ];
 
 let kQs,kI,kPtsk,kAnsk;
-function startKids(){kQs=byLevel(KIDS_Q);kI=0;kPtsk=0;loadK();show('s-kids');}
+function startKids(){kQs=byLevel(KIDS_Q);kI=0;kPtsk=0;resetHUD();loadK();show('s-kids');}
 function loadK(){
   kAnsk=false;const q=kQs[kI];
   $('k-q').textContent=`${kI+1}/${kQs.length}`;$('k-pts').textContent=kPtsk;
@@ -2369,9 +2411,9 @@ function ansK(ok,btn,ci,opts,e,lvl){
   const fb=$('k-fb');const pts=DIFF_PTS[lvl]||20;
   if(ok){btn.style.background='#E8F5EC';btn.style.borderColor='#2E7D32';btn.style.color='#1B5E20';
     kPtsk+=pts;$('k-pts').textContent=kPtsk;
-    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>${praise()} +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');fireworks();}
+    fb.className='fb2 ok show';fb.innerHTML=`🌟 <b>${praise()} +${pts} نقطة</b><br>✨ ${e}`;toast('🌟 إجابة رائعة!');fireworks();hudCorrect();}
   else{btn.style.background='#FFEBEE';btn.style.borderColor='#C62828';btn.style.color='#B71C1C';
-    fb.className='fb2 err show';fb.innerHTML=`💪 الصحيح: <b>${opts[ci]}</b><br>✨ ${e}`;toast('💪 حاول في السؤال التالي!');}
+    fb.className='fb2 err show';fb.innerHTML=`💪 الصحيح: <b>${opts[ci]}</b><br>✨ ${e}`;toast('💪 حاول في السؤال التالي!');hudWrong();}
   $('k-next').style.display='block';kI++;
   if(kI>=kQs.length)$('k-next').textContent='النتيجة 🏆';
 }
@@ -2428,7 +2470,7 @@ const MN_Q = [
 ];
 
 let mnQs,mnI,mnPts,mnAns;
-function startMeaning(){mnQs=byLevel(MN_Q);mnI=0;mnPts=0;loadMn();show('s-meaning');}
+function startMeaning(){mnQs=byLevel(MN_Q);mnI=0;mnPts=0;resetHUD();loadMn();show('s-meaning');}
 function loadMn(){
   mnAns=false;const q=mnQs[mnI];
   $('mn-q').textContent=`${mnI+1}/${mnQs.length}`;$('mn-pts').textContent=mnPts;
@@ -2446,9 +2488,9 @@ function loadMn(){
       const fb=$('mn-fb');
       const mnAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');mnPts+=mnAdd;$('mn-pts').textContent=mnPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);fireworks();}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${mnAdd} نقطة</b><br>📖 ${q.explain}`;toast(`✅ +${mnAdd} نقطة`);fireworks();hudCorrect();}
       else{btn.classList.add('wrong');
-        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📖 ${q.explain}`;toast('❌ حاول في التالية!');}
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>📖 ${q.explain}`;toast('❌ حاول في التالية!');hudWrong();}
       $('mn-next').style.display='block';mnI++;
       if(mnI>=mnQs.length)$('mn-next').textContent='النتيجة 🏆';
     };og.appendChild(btn);
@@ -2491,7 +2533,7 @@ const CV_Q = [
 ];
 
 let cvQs,cvI,cvPts,cvAns;
-function startCover(){cvQs=byLevel(CV_Q);cvI=0;cvPts=0;loadCv();show('s-cover');}
+function startCover(){cvQs=byLevel(CV_Q);cvI=0;cvPts=0;resetHUD();loadCv();show('s-cover');}
 function loadCv(){
   cvAns=false;const q=cvQs[cvI];
   $('cv-q').textContent=`${cvI+1}/${cvQs.length}`;$('cv-pts').textContent=cvPts;
@@ -2513,9 +2555,9 @@ function loadCv(){
       const fb=$('cv-fb');
       const cvAdd=DIFF_PTS[q.level]||25;
       if(i===q.ok){btn.classList.add('correct');cvPts+=cvAdd;$('cv-pts').textContent=cvPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);fireworks();}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${cvAdd} نقطة</b><br>🖼️ ${q.explain}`;toast(`✅ +${cvAdd} نقطة`);fireworks();hudCorrect();}
       else{btn.classList.add('wrong');
-        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🖼️ ${q.explain}`;toast('❌ حاول في التالية!');}
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🖼️ ${q.explain}`;toast('❌ حاول في التالية!');hudWrong();}
       $('cv-next').style.display='block';cvI++;
       if(cvI>=cvQs.length)$('cv-next').textContent='النتيجة 🏆';
     };og.appendChild(btn);
@@ -2563,7 +2605,7 @@ const HT_Q = [
 ];
 
 let htQs,htI,htPts,htAns,htAnswered;
-function startHunter(){htQs=byLevel(HT_Q);htI=0;htPts=0;loadHt();show('s-hunter');}
+function startHunter(){htQs=byLevel(HT_Q);htI=0;htPts=0;resetHUD();loadHt();show('s-hunter');}
 function loadHt(){
   htAns=false;htAnswered=false;
   const q=htQs[htI];
@@ -2594,10 +2636,10 @@ function clickWord(idx){
     $('ht-correction').innerHTML=`<b>📝 التصحيح:</b><br>${q.explanation}`;
     $('ht-next').style.display='block';htI++;
     if(htI>=htQs.length)$('ht-next').textContent='النتيجة 🏆';
-    toast('🎯 أصبت الخطأ! +30 نقطة');fireworks();
+    toast('🎯 أصبت الخطأ! +30 نقطة');fireworks();hudCorrect();
   } else {
     span.classList.add('selected-wrong');
-    toast('❌ هذه ليست الكلمة الخاطئة — حاول مجدداً');
+    toast('❌ هذه ليست الكلمة الخاطئة — حاول مجدداً');hudWrong();
   }
 }
 function nextHt(){
@@ -2627,7 +2669,7 @@ const ROOT_Q=[
   {word:"تساءل",opts:["سأل","ساءل","تسل","سلأ"],ok:0,level:"hard",explain:"جذر 'تساءل' هو 'سأل' — الهمزة أصلية، والتاء زائدة في أول الفعل (تفاعل)."},
 ];
 let roQs,roI,roPts,roAns;
-function startRoot(){roQs=byLevel(ROOT_Q);roI=0;roPts=0;loadR();show('s-root');}
+function startRoot(){roQs=byLevel(ROOT_Q);roI=0;roPts=0;resetHUD();loadR();show('s-root');}
 function loadR(){
   roAns=false;const q=roQs[roI];
   $('ro-q').textContent=`${roI+1}/${roQs.length}`;$('ro-pts').textContent=roPts;
@@ -2642,9 +2684,9 @@ function loadR(){
       document.querySelectorAll('#ro-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('ro-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');roPts+=pts;$('ro-pts').textContent=roPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🌱 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();hudCorrect();}
       else{btn.classList.add('wrong');
-        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🌱 ${q.explain}`;toast('❌ حاول في التالية!');}
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🌱 ${q.explain}`;toast('❌ حاول في التالية!');hudWrong();}
       $('ro-next').style.display='block';roI++;
       if(roI>=roQs.length)$('ro-next').textContent='النتيجة 🏆';
     };og.appendChild(btn);
@@ -2673,7 +2715,7 @@ const CONJ_Q=[
   {q:"صرّف الفعل الأجوف 'باع' مع الضمير 'هنّ' في الماضي:",opts:["بعن","باعن","بعنّ","بايعن"],ok:0,level:"hard",explain:"الفعل الأجوف 'باع' مع نون النسوة تُحذف حرف العلة: بِعْنَ."},
 ];
 let cjQs,cjI,cjPts,cjAns;
-function startConj(){cjQs=byLevel(CONJ_Q);cjI=0;cjPts=0;loadCj();show('s-conj');}
+function startConj(){cjQs=byLevel(CONJ_Q);cjI=0;cjPts=0;resetHUD();loadCj();show('s-conj');}
 function loadCj(){
   cjAns=false;const q=cjQs[cjI];
   $('cj-q').textContent=`${cjI+1}/${cjQs.length}`;$('cj-pts').textContent=cjPts;
@@ -2688,9 +2730,9 @@ function loadCj(){
       document.querySelectorAll('#cj-opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===q.opts[q.ok])b.classList.add('correct');});
       const fb=$('cj-fb');const pts=DIFF_PTS[q.level]||20;
       if(i===q.ok){btn.classList.add('correct');cjPts+=pts;$('cj-pts').textContent=cjPts;
-        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();}
+        fb.className='fb2 ok show';fb.innerHTML=`✅ <b>${praise()} +${pts} نقطة</b><br>🔄 ${q.explain}`;toast(`✅ +${pts} نقطة`);fireworks();hudCorrect();}
       else{btn.classList.add('wrong');
-        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🔄 ${q.explain}`;toast('❌ حاول في التالية!');}
+        fb.className='fb2 err show';fb.innerHTML=`❌ الصحيح: <b>${q.opts[q.ok]}</b><br>🔄 ${q.explain}`;toast('❌ حاول في التالية!');hudWrong();}
       $('cj-next').style.display='block';cjI++;
       if(cjI>=cjQs.length)$('cj-next').textContent='النتيجة 🏆';
     };og.appendChild(btn);
@@ -2701,6 +2743,11 @@ function nextCj(){if(cjI>=cjQs.length){showResult(cjPts,'cj',[`🔄 صرّفت <
 document.querySelectorAll('[data-icon]').forEach(el=>{
   const sz = el.classList.contains('ghdr-ico') ? 17 : 12;
   el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon, sz) + ' ');
+});
+
+/* ── حقن عنصر القلوب في ترويسة كل شاشة لعبة ── */
+document.querySelectorAll('.ghdr-stats').forEach(el=>{
+  el.insertAdjacentHTML('beforeend','<div class="gstat hud-life"><div class="gv hud-hearts">❤️❤️❤️</div><div class="gl">حياة</div></div><div class="gstat hud-streak-wrap"><div class="gv hud-streak">—</div><div class="gl">السلسلة</div></div>');
 });
 
 /* ── تفاعل ثلاثي الأبعاد (إمالة تتبع المؤشر) ── */
